@@ -1,0 +1,1127 @@
+import { useState, useMemo, useEffect, useCallback } from "react";
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const restaurants = [
+  {
+    id: "maison-lune",
+    name: "Maison Lune",
+    tagline: "French bistro with a soulful Southern twist",
+    cuisine: "French-Southern",
+    neighborhood: "Midtown",
+    coverColor: "#1a1209", accentColor: "#c8973a", emoji: "🥐",
+    mapX: 42, mapY: 38,
+    address: "840 Peachtree St NW, Midtown",
+    hours: { "Mon–Thu": "11am – 10pm", "Fri–Sat": "11am – 12am", Sun: "10am – 9pm" },
+    capacity: 72,
+    highlights: ["James Beard nominated chef", "Outdoor terrace", "Live jazz Fridays", "Organic wine list"],
+    howToOrder: "Walk-in welcome. For parties of 5+, call ahead. Pickup orders placed via phone or website, ready in 20–30 min. We do not use third-party delivery apps.",
+    rsvp: { type: "link", label: "Reserve on OpenTable", value: "https://www.opentable.com" },
+    mapLink: "https://maps.google.com/?q=Maison+Lune+Bistro",
+    appleMapsLink: "https://maps.apple.com/?q=Maison+Lune+Bistro",
+    overallRating: 4.6,
+    menu: [
+      { category: "Starters", items: [
+        { name: "Escargot Beignets", price: 16, rating: 4.9, tags: ["Chef's Pick","Popular"], desc: "Crispy beignet dough, garlic herb butter, parsley oil" },
+        { name: "Charred Okra Salad", price: 13, rating: 4.5, tags: ["Vegetarian"], desc: "Heirloom tomatoes, feta, smoked vinaigrette" },
+        { name: "Boudin Noir Croustade", price: 18, rating: 4.7, tags: ["Popular"], desc: "Blood sausage, caramelized apple, brioche toast" },
+      ]},
+      { category: "Mains", items: [
+        { name: "Duck Confit Étouffée", price: 34, rating: 4.8, tags: ["Chef's Pick","Signature"], desc: "Slow-cooked duck leg, crawfish étouffée, dirty rice" },
+        { name: "Pan-Seared Trout Amandine", price: 29, rating: 4.6, tags: ["Popular"], desc: "Brown butter, toasted almonds, haricots verts" },
+        { name: "Cassoulet du Bayou", price: 31, rating: 4.4, tags: [], desc: "White beans, andouille, duck confit, herb breadcrumb crust" },
+        { name: "Mushroom & Gruyère Galette", price: 24, rating: 4.3, tags: ["Vegetarian"], desc: "Wild mushrooms, leeks, Gruyère, buckwheat crêpe" },
+      ]},
+      { category: "Desserts", items: [
+        { name: "Tarte Tatin au Banane", price: 12, rating: 4.9, tags: ["Must Try","Popular"], desc: "Caramelized banana, flambéed rum, crème fraîche" },
+        { name: "Praline Pot de Crème", price: 11, rating: 4.7, tags: ["Signature"], desc: "Silky pecan praline custard, sea salt, candied pecans" },
+      ]},
+    ],
+  },
+  {
+    id: "umami-den",
+    name: "Umami Den",
+    tagline: "Modern Japanese izakaya, late night energy",
+    cuisine: "Japanese",
+    neighborhood: "Downtown",
+    coverColor: "#0d1117", accentColor: "#e05252", emoji: "🍜",
+    mapX: 28, mapY: 62,
+    address: "215 Broad St, Downtown",
+    hours: { "Mon–Wed": "5pm – 12am", "Thu–Sat": "5pm – 2am", Sun: "Closed" },
+    capacity: 45,
+    highlights: ["150+ Japanese whisky selection", "Open late", "Omakase Thursdays", "Rooftop bar"],
+    howToOrder: "Walk-ins only — no reservations except Omakase. Pickup available for select bento boxes. Kitchen closes 1 hour before closing.",
+    rsvp: { type: "text", label: "Walk-in only", value: null },
+    mapLink: "https://maps.google.com/?q=Umami+Den+Izakaya",
+    appleMapsLink: "https://maps.apple.com/?q=Umami+Den+Izakaya",
+    overallRating: 4.8,
+    menu: [
+      { category: "Small Plates", items: [
+        { name: "Wagyu Gyoza (5pc)", price: 18, rating: 4.9, tags: ["Best Seller","Must Try"], desc: "A5 wagyu beef, truffle ponzu, crispy skirt" },
+        { name: "Takoyaki", price: 12, rating: 4.6, tags: ["Popular"], desc: "Octopus balls, Kewpie mayo, bonito, okonomiyaki sauce" },
+        { name: "Edamame Karaage", price: 9, rating: 4.2, tags: ["Vegan"], desc: "Twice-fried, yuzu salt, togarashi" },
+        { name: "Uni Toast", price: 24, rating: 4.8, tags: ["Chef's Pick"], desc: "Santa Barbara uni, shiso butter, milk bread" },
+      ]},
+      { category: "Ramen & Noodles", items: [
+        { name: "Black Garlic Tonkotsu", price: 22, rating: 4.9, tags: ["Signature","Best Seller"], desc: "72-hour pork bone broth, chashu, soft egg, black garlic oil" },
+        { name: "Spicy Miso Ramen", price: 20, rating: 4.7, tags: ["Popular"], desc: "Red miso, corn, butter, ground pork, bamboo shoots" },
+        { name: "Shio Tori Ramen", price: 19, rating: 4.5, tags: [], desc: "Delicate chicken shio broth, yuzu, seri herb" },
+      ]},
+      { category: "Skewers", items: [
+        { name: "Chicken Thigh & Scallion", price: 7, rating: 4.6, tags: ["Popular"], desc: "Binchotan-grilled, tare glaze" },
+        { name: "Tsukune (Chicken Meatball)", price: 8, rating: 4.8, tags: ["Must Try"], desc: "Soft egg yolk dipping sauce, sansho pepper" },
+        { name: "Pork Belly", price: 8, rating: 4.7, tags: [], desc: "Yuzu kosho, sea salt" },
+      ]},
+    ],
+  },
+  {
+    id: "sol-y-tierra",
+    name: "Sol y Tierra",
+    tagline: "Fire-cooked Peruvian, rooted in tradition",
+    cuisine: "Peruvian",
+    neighborhood: "Eastside",
+    coverColor: "#130a00", accentColor: "#f4a940", emoji: "🔥",
+    mapX: 68, mapY: 55,
+    address: "1422 Edgewood Ave, Eastside",
+    hours: { "Tue–Thu": "12pm – 10pm", "Fri–Sat": "12pm – 11pm", Sun: "11am – 8pm", Mon: "Closed" },
+    capacity: 58,
+    highlights: ["Wood-fire grill", "Family recipes since 1987", "Ceviche bar", "Gluten-free friendly"],
+    howToOrder: "Reservations recommended on weekends. Walk-ins at the bar or ceviche counter. Pickup via phone — 30 min notice. Delivery within 3 miles.",
+    rsvp: { type: "phone", label: "Call to Reserve", value: "+1 (555) 384-2910" },
+    mapLink: "https://maps.google.com/?q=Sol+y+Tierra+Peruvian",
+    appleMapsLink: "https://maps.apple.com/?q=Sol+y+Tierra+Peruvian",
+    overallRating: 4.7,
+    menu: [
+      { category: "Ceviche Bar", items: [
+        { name: "Ceviche Clásico", price: 19, rating: 4.9, tags: ["Signature","Must Try"], desc: "Fresh corvina, leche de tigre, red onion, choclo, cancha" },
+        { name: "Tiradito Nikkei", price: 21, rating: 4.8, tags: ["Chef's Pick"], desc: "Yellowtail, miso leche de tigre, sesame, micro shiso" },
+        { name: "Causa Limeña", price: 14, rating: 4.5, tags: ["Vegetarian option"], desc: "Yellow potato terrine, ají amarillo, avocado, quail egg" },
+      ]},
+      { category: "From the Fire", items: [
+        { name: "Anticuchos de Corazón", price: 17, rating: 4.7, tags: ["Traditional","Popular"], desc: "Beef heart skewers, chimichurri, roasted corn" },
+        { name: "Pollo a la Brasa (Half)", price: 26, rating: 4.8, tags: ["Best Seller"], desc: "Rotisserie chicken, ají verde, papa a la huancaína" },
+        { name: "Lomo Saltado", price: 28, rating: 4.6, tags: ["Popular"], desc: "Wok-tossed beef tenderloin, tomato, ají amarillo, fries, rice" },
+        { name: "Parrilla Mixta (for 2)", price: 54, rating: 4.9, tags: ["Sharing","Must Try"], desc: "Mixed grill: steak, chicken, chorizo, veggies, 3 sauces" },
+      ]},
+      { category: "Sweets", items: [
+        { name: "Picarones", price: 10, rating: 4.7, tags: ["Traditional"], desc: "Sweet potato & squash doughnuts, chancaca syrup" },
+        { name: "Suspiro Limeño", price: 11, rating: 4.8, tags: ["Signature"], desc: "Dulce de leche custard, port wine meringue, cinnamon" },
+      ]},
+    ],
+  },
+  {
+    id: "the-forge",
+    name: "The Forge",
+    tagline: "Wood-fired steaks & craft cocktails",
+    cuisine: "American",
+    neighborhood: "Westside",
+    coverColor: "#120808", accentColor: "#d97c3a", emoji: "🥩",
+    mapX: 16, mapY: 28,
+    address: "55 Marietta Blvd NW, Westside",
+    hours: { "Mon–Thu": "4pm – 11pm", "Fri–Sat": "4pm – 1am", Sun: "3pm – 9pm" },
+    capacity: 90,
+    highlights: ["USDA Prime beef", "In-house dry aging", "Craft cocktail bar", "Private dining room"],
+    howToOrder: "Reservations strongly recommended. Walk-in bar seating available. Takeout available for select items via phone.",
+    rsvp: { type: "link", label: "Book on Resy", value: "https://resy.com" },
+    mapLink: "https://maps.google.com/?q=The+Forge+Steakhouse",
+    appleMapsLink: "https://maps.apple.com/?q=The+Forge+Steakhouse",
+    overallRating: 4.5,
+    menu: [
+      { category: "Starters", items: [
+        { name: "Bone Marrow Toast", price: 19, rating: 4.8, tags: ["Chef's Pick","Popular"], desc: "Roasted bone marrow, gremolata, charred sourdough" },
+        { name: "Wedge Salad", price: 14, rating: 4.3, tags: [], desc: "Iceberg, blue cheese, bacon lardons, pickled shallot" },
+        { name: "Shrimp Cocktail", price: 22, rating: 4.5, tags: ["Classic"], desc: "Poached gulf shrimp, house cocktail sauce, lemon" },
+      ]},
+      { category: "Steaks", items: [
+        { name: "NY Strip 12oz", price: 52, rating: 4.7, tags: ["Popular"], desc: "USDA Prime, dry-aged 28 days, compound butter" },
+        { name: "Ribeye 16oz", price: 68, rating: 4.9, tags: ["Signature","Best Seller"], desc: "Bone-in prime ribeye, wood-fire finished, truffle salt" },
+        { name: "Filet Mignon 8oz", price: 58, rating: 4.6, tags: ["Popular"], desc: "Center-cut filet, béarnaise, crispy shallots" },
+        { name: "Tomahawk 38oz (for 2)", price: 110, rating: 4.9, tags: ["Sharing","Must Try"], desc: "Long-bone prime ribeye, tableside carving, 3 sauces" },
+      ]},
+      { category: "Sides", items: [
+        { name: "Truffle Mac & Cheese", price: 14, rating: 4.7, tags: ["Popular"], desc: "Black truffle, aged cheddar, crispy breadcrumb" },
+        { name: "Roasted Asparagus", price: 12, rating: 4.3, tags: ["Vegetarian"], desc: "Lemon brown butter, shaved parmesan" },
+        { name: "Loaded Baked Potato", price: 11, rating: 4.5, tags: ["Classic"], desc: "Sour cream, cheddar, chives, bacon bits" },
+      ]},
+    ],
+  },
+];
+
+// ── BUDGET LOGIC ──────────────────────────────────────────────────────────────
+function calcBudgetResults(totalBudget, guests, includeTip, drinksBudget, cuisineFilter) {
+  const foodOnlyBudget = totalBudget - drinksBudget;
+  const foodBudget = includeTip ? foodOnlyBudget / 1.2 : foodOnlyBudget;
+  const perPerson = foodBudget / guests;
+  const drinksPerPerson = drinksBudget / guests;
+
+  const pool = cuisineFilter === "All"
+    ? restaurants
+    : restaurants.filter(r => r.cuisine === cuisineFilter);
+
+  return pool.map(r => {
+    const allItems = r.menu.flatMap(c => c.items);
+    const byRating = arr => [...arr].sort((a, b) => b.rating - a.rating);
+
+    const mains    = byRating(allItems.filter(i => i.price >= 16));
+    const starters = byRating(allItems.filter(i => i.price < 16 && i.price >= 9));
+    const desserts = byRating(allItems.filter(i => i.price < 14));
+
+    let meal = [], spent = 0;
+    const bestMain = mains.find(i => i.price <= perPerson);
+    if (bestMain) { meal.push({ ...bestMain, course: "Main" }); spent += bestMain.price; }
+    const bestStarter = starters.find(i => spent + i.price <= perPerson);
+    if (bestStarter) { meal.push({ ...bestStarter, course: "Starter" }); spent += bestStarter.price; }
+    const bestDessert = desserts.find(i => spent + i.price <= perPerson && i.name !== bestStarter?.name);
+    if (bestDessert) { meal.push({ ...bestDessert, course: "Dessert" }); spent += bestDessert.price; }
+
+    if (meal.length === 0) {
+      const affordable = byRating(allItems.filter(i => i.price <= foodBudget));
+      meal = affordable.slice(0, 3).map(i => ({ ...i, course: "Dish" }));
+      spent = meal.reduce((s, i) => s + i.price, 0) / Math.max(guests, 1);
+    }
+
+    const foodTotal  = spent * guests;
+    const tipAmt     = foodTotal * 0.2;
+    const grandTotal = foodTotal + tipAmt + drinksBudget;
+    const avgRating  = meal.length ? meal.reduce((s, i) => s + i.rating, 0) / meal.length : 0;
+    const canAfford  = grandTotal <= totalBudget;
+    const leftover   = totalBudget - grandTotal;
+    const valueScore = avgRating > 0 ? Math.min(10, (avgRating / ((foodTotal + tipAmt) / guests)) * 10) : 0;
+
+    return { r, meal, spent, foodTotal, tipAmt, drinksBudget, drinksPerPerson, grandTotal, avgRating, canAfford, leftover, valueScore };
+  }).sort((a, b) => {
+    if (a.canAfford !== b.canAfford) return a.canAfford ? -1 : 1;
+    return b.valueScore - a.valueScore;
+  });
+}
+
+// ── GLOBAL STYLES ─────────────────────────────────────────────────────────────
+const G = `
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:#0e0c09;color:#e8e0d0;font-family:'DM Sans',sans-serif;min-height:100vh;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:#0e0c09;}::-webkit-scrollbar-thumb{background:#2a2520;border-radius:3px;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;border:none;background:none;font-family:inherit;}
+input,select{font-family:'DM Sans',sans-serif;}
+.fi{animation:fi .42s ease forwards;}
+@keyframes fi{from{opacity:0;transform:translateY(11px);}to{opacity:1;transform:none;}}
+.ch{transition:transform .22s ease,box-shadow .22s ease;}
+.ch:hover{transform:translateY(-4px);box-shadow:0 18px 48px rgba(0,0,0,.55);}
+.bp{transition:filter .18s,transform .14s;}
+.bp:hover{filter:brightness(1.14);transform:translateY(-1px);}
+.fav-btn{transition:transform .2s,color .2s;}
+.fav-btn:hover{transform:scale(1.2);}
+@keyframes ripple{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.6);opacity:0}}
+@keyframes heartPop{0%{transform:scale(1);}50%{transform:scale(1.5);}100%{transform:scale(1);}}
+.heart-pop{animation:heartPop .3s ease;}
+`;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+const Stars = ({ rating, size = 13 }) => {
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.5;
+  return (
+    <span style={{ display:"inline-flex", alignItems:"center", gap:1 }}>
+      {[1,2,3,4,5].map(i => (
+        <span key={i} style={{ fontSize:size, color:(i<=full||(i===full+1&&half))?"#f4c842":"#333", lineHeight:1 }}>
+          {i<=full?"★":i===full+1&&half?"⯨":"☆"}
+        </span>
+      ))}
+      <span style={{ fontSize:size-2, color:"#888", marginLeft:3 }}>{rating.toFixed(1)}</span>
+    </span>
+  );
+};
+
+const Chip = ({ label, accent }) => (
+  <span style={{ fontSize:10, fontFamily:"'DM Mono',monospace", letterSpacing:"0.08em", padding:"2px 8px", borderRadius:2, background:accent+"1a", color:accent, border:`1px solid ${accent}33`, whiteSpace:"nowrap" }}>{label}</span>
+);
+
+// ── FAVORITES HOOK (persistent via storage API) ───────────────────────────────
+function useFavorites() {
+  const [favs, setFavs] = useState(new Set());
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("tableone:favorites");
+      if (saved) setFavs(new Set(JSON.parse(saved)));
+    } catch (_) {}
+    setLoaded(true);
+  }, []);
+
+  const toggle = useCallback((id) => {
+    setFavs(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      localStorage.setItem("tableone:favorites", JSON.stringify([...next]));
+      return next;
+    });
+}, []);
+
+  return { favs, toggle, loaded };
+}
+
+// ── HEART BUTTON ──────────────────────────────────────────────────────────────
+const HeartBtn = ({ id, favs, toggle, size = 20 }) => {
+  const [pop, setPop] = useState(false);
+  const isFav = favs.has(id);
+  const handleClick = (e) => {
+    e.stopPropagation();
+    toggle(id);
+    setPop(true);
+    setTimeout(() => setPop(false), 350);
+  };
+  return (
+    <button onClick={handleClick} className={`fav-btn${pop?" heart-pop":""}`}
+      title={isFav ? "Remove from favorites" : "Add to favorites"}
+      style={{ fontSize:size, lineHeight:1, color:isFav?"#e05252":"#444", background:"none", padding:4, borderRadius:"50%", flexShrink:0 }}>
+      {isFav ? "♥" : "♡"}
+    </button>
+  );
+};
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+const Nav = ({ view, setPage, favCount }) => (
+  <nav style={{ position:"sticky", top:0, zIndex:200, background:"rgba(14,12,9,.95)", backdropFilter:"blur(14px)", borderBottom:"1px solid #221f1a", display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 20px", height:58 }}>
+    <button onClick={() => setPage("home")} style={{ display:"flex", alignItems:"center", gap:9 }}>
+      <span style={{ fontSize:20 }}>🍽️</span>
+      <span style={{ fontFamily:"'Playfair Display',serif", fontSize:19, fontWeight:700, color:"#f0e8d8", letterSpacing:"-0.02em" }}>TableOne</span>
+    </button>
+    <div style={{ display:"flex", gap:2, alignItems:"center" }}>
+      {[["home","Discover"],["map","🗺 Map"],["budget","💰 Budget"],["favorites","♥ Saved"]].map(([k,l]) => (
+        <button key={k} onClick={() => setPage(k)}
+          style={{ fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.08em", padding:"6px 10px", textTransform:"uppercase", position:"relative",
+            color: view===k ? "#c8973a" : k==="favorites" && favCount>0 ? "#e05252" : "#666",
+            borderBottom:`2px solid ${view===k?"#c8973a":"transparent"}`,
+            transition:"all .2s" }}>
+          {l}
+          {k==="favorites" && favCount>0 && (
+            <span style={{ position:"absolute", top:2, right:2, background:"#e05252", color:"#fff", borderRadius:"50%", width:14, height:14, fontSize:8, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'DM Mono',monospace" }}>
+              {favCount}
+            </span>
+          )}
+        </button>
+      ))}
+    </div>
+  </nav>
+);
+
+// ── HOME ──────────────────────────────────────────────────────────────────────
+const Home = ({ setPage, favs, toggleFav }) => {
+  const [q, setQ] = useState("");
+  const [f, setF] = useState("All");
+  const cuisines = ["All", ...new Set(restaurants.map(r => r.cuisine))];
+  const list = restaurants.filter(r =>
+    (f==="All"||r.cuisine===f) &&
+    [r.name,r.cuisine,r.neighborhood].some(s => s.toLowerCase().includes(q.toLowerCase()))
+  );
+
+  return (
+    <div className="fi">
+      {/* Hero */}
+      <div style={{ textAlign:"center", padding:"64px 20px 48px", position:"relative" }}>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 55% at 50% 0%,#2a1a0435 0%,transparent 70%)", pointerEvents:"none" }}/>
+        <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.22em", color:"#c8973a", textTransform:"uppercase", marginBottom:14 }}>Your city's best tables</p>
+        <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(38px,8vw,76px)", fontWeight:900, lineHeight:1.05, color:"#f0e8d8", letterSpacing:"-0.03em", marginBottom:18 }}>
+          Every dish,<br /><em style={{ color:"#c8973a" }}>rated.</em>
+        </h1>
+        <p style={{ color:"#888", fontSize:15, maxWidth:420, margin:"0 auto 28px", lineHeight:1.65 }}>
+          Not just the restaurant — every item on the menu. Find where to eat and exactly what to order.
+        </p>
+        <div style={{ display:"flex", gap:10, justifyContent:"center", marginBottom:30, flexWrap:"wrap" }}>
+          <button onClick={() => setPage("map")} className="bp" style={{ display:"flex", alignItems:"center", gap:6, padding:"10px 18px", borderRadius:8, background:"#1a1710", border:"1px solid #3a3228", color:"#e8e0d0", fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.1em" }}>🗺️ MAP VIEW</button>
+          <button onClick={() => setPage("budget")} className="bp" style={{ display:"flex", alignItems:"center", gap:6, padding:"10px 18px", borderRadius:8, background:"#c8973a18", border:"1px solid #c8973a44", color:"#c8973a", fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.1em" }}>💰 BUDGET PLANNER</button>
+          {favs.size > 0 && (
+            <button onClick={() => setPage("favorites")} className="bp" style={{ display:"flex", alignItems:"center", gap:6, padding:"10px 18px", borderRadius:8, background:"#e0525218", border:"1px solid #e0525244", color:"#e05252", fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.1em" }}>♥ {favs.size} SAVED</button>
+          )}
+        </div>
+        <div style={{ maxWidth:460, margin:"0 auto", position:"relative" }}>
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search restaurant, cuisine, neighborhood…"
+            style={{ width:"100%", padding:"13px 18px 13px 46px", borderRadius:8, background:"#1a1710", border:"1px solid #3a3228", color:"#e8e0d0", fontSize:14, outline:"none" }}/>
+          <span style={{ position:"absolute", left:14, top:"50%", transform:"translateY(-50%)", fontSize:16, opacity:.4 }}>🔍</span>
+        </div>
+      </div>
+
+      {/* Cuisine Filters */}
+      <div style={{ display:"flex", gap:7, padding:"0 20px 28px", flexWrap:"wrap" }}>
+        {cuisines.map(c => (
+          <button key={c} onClick={() => setF(c)}
+            style={{ padding:"6px 14px", borderRadius:20, fontSize:12, fontFamily:"'DM Mono',monospace", border:`1px solid ${f===c?"#c8973a":"#2a2520"}`, background:f===c?"#c8973a18":"transparent", color:f===c?"#c8973a":"#777", letterSpacing:"0.05em", whiteSpace:"nowrap", transition:"all .2s" }}>
+            {c}
+          </button>
+        ))}
+      </div>
+
+      {/* Grid */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(275px,1fr))", gap:20, padding:"0 20px 80px", maxWidth:1100, margin:"0 auto" }}>
+        {list.map((r, i) => (
+          <div key={r.id} className="ch" style={{ background:"#141210", border:`1px solid ${favs.has(r.id)?"#e0525230":"#2a2520"}`, borderRadius:12, overflow:"hidden", position:"relative", animation:`fi .4s ease ${i*.07}s both`, cursor:"pointer" }}
+            onClick={() => setPage({ view:"restaurant", id:r.id })}>
+            {/* Fav badge */}
+            {favs.has(r.id) && (
+              <div style={{ position:"absolute", top:10, left:10, zIndex:2, background:"#e05252", borderRadius:5, padding:"2px 7px", fontFamily:"'DM Mono',monospace", fontSize:9, color:"#fff", letterSpacing:"0.08em" }}>♥ SAVED</div>
+            )}
+            <div style={{ height:152, background:r.coverColor, backgroundImage:`radial-gradient(ellipse at 30% 50%,${r.accentColor}28 0%,transparent 60%)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:60, position:"relative" }}>
+              {r.emoji}
+              <div style={{ position:"absolute", top:10, right:10 }}>
+                <HeartBtn id={r.id} favs={favs} toggle={toggleFav} size={18} />
+              </div>
+              <div style={{ position:"absolute", bottom:10, left:10, background:"rgba(0,0,0,.72)", backdropFilter:"blur(8px)", borderRadius:5, padding:"3px 9px", fontFamily:"'DM Mono',monospace", fontSize:10, color:"#ddd" }}>{r.neighborhood}</div>
+            </div>
+            <div style={{ padding:"17px 18px 21px" }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:5 }}>
+                <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:20, fontWeight:700, color:"#f0e8d8", lineHeight:1.2 }}>{r.name}</h2>
+                <Stars rating={r.overallRating} size={12} />
+              </div>
+              <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:r.accentColor, letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:7 }}>{r.cuisine}</p>
+              <p style={{ color:"#777", fontSize:13, lineHeight:1.55, marginBottom:13 }}>{r.tagline}</p>
+              <div style={{ display:"flex", gap:5, flexWrap:"wrap" }}>
+                {r.highlights.slice(0,3).map(h => <Chip key={h} label={h} accent={r.accentColor} />)}
+              </div>
+            </div>
+          </div>
+        ))}
+        {list.length===0 && (
+          <div style={{ gridColumn:"1/-1", textAlign:"center", padding:"60px 0", color:"#444" }}>
+            <p style={{ fontSize:30, marginBottom:10 }}>🍽️</p>
+            <p>No restaurants match your search.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── FAVORITES PAGE ────────────────────────────────────────────────────────────
+const Favorites = ({ setPage, favs, toggleFav }) => {
+  const list = restaurants.filter(r => favs.has(r.id));
+
+  return (
+    <div className="fi" style={{ padding:"0 0 80px" }}>
+      <div style={{ padding:"38px 20px 28px", maxWidth:900, margin:"0 auto" }}>
+        <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#e05252", letterSpacing:"0.2em", textTransform:"uppercase", marginBottom:10 }}>Your Collection</p>
+        <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(26px,4vw,42px)", fontWeight:900, color:"#f0e8d8", letterSpacing:"-0.02em", marginBottom:8 }}>
+          Saved Restaurants
+        </h1>
+        {list.length > 0
+          ? <p style={{ color:"#777", fontSize:14 }}>{list.length} restaurant{list.length>1?"s":""} in your collection — saved across sessions.</p>
+          : <p style={{ color:"#555", fontSize:14 }}>You haven't saved any restaurants yet. Tap ♡ on any restaurant to save it.</p>
+        }
+      </div>
+
+      {list.length === 0 && (
+        <div style={{ maxWidth:900, margin:"0 auto", padding:"0 20px" }}>
+          <div style={{ background:"#141210", border:"1px solid #2a2520", borderRadius:14, padding:"56px 24px", textAlign:"center" }}>
+            <p style={{ fontSize:48, marginBottom:16 }}>♡</p>
+            <p style={{ fontFamily:"'Playfair Display',serif", fontSize:20, color:"#f0e8d8", marginBottom:10 }}>Nothing saved yet</p>
+            <p style={{ color:"#666", fontSize:14, marginBottom:24 }}>Browse restaurants and tap the heart to save your favorites.</p>
+            <button onClick={() => setPage("home")} className="bp"
+              style={{ background:"#c8973a", color:"#0e0c09", padding:"12px 28px", borderRadius:8, fontFamily:"'DM Mono',monospace", fontSize:11, letterSpacing:"0.08em" }}>
+              BROWSE RESTAURANTS →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {list.length > 0 && (
+        <div style={{ maxWidth:900, margin:"0 auto", padding:"0 20px", display:"flex", flexDirection:"column", gap:14 }}>
+          {list.map((r, i) => (
+            <div key={r.id} className="fi" style={{ background:"#141210", border:`1px solid ${r.accentColor}30`, borderRadius:12, overflow:"hidden", animation:`fi .35s ease ${i*.06}s both` }}>
+              <div style={{ display:"flex", gap:0, alignItems:"stretch" }}>
+                {/* Color strip */}
+                <div style={{ width:6, background:r.accentColor, flexShrink:0 }}/>
+                {/* Emoji block */}
+                <div style={{ width:80, flexShrink:0, background:r.coverColor, backgroundImage:`radial-gradient(circle,${r.accentColor}30 0%,transparent 70%)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:32 }}>
+                  {r.emoji}
+                </div>
+                {/* Info */}
+                <div style={{ flex:1, padding:"16px 18px", minWidth:0 }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8 }}>
+                    <div style={{ minWidth:0 }}>
+                      <p style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:r.accentColor, letterSpacing:"0.12em", textTransform:"uppercase", marginBottom:2 }}>{r.cuisine} · {r.neighborhood}</p>
+                      <h3 style={{ fontFamily:"'Playfair Display',serif", fontSize:19, fontWeight:700, color:"#f0e8d8", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{r.name}</h3>
+                      <p style={{ color:"#777", fontSize:12.5, marginTop:3, lineHeight:1.4 }}>{r.tagline}</p>
+                    </div>
+                    <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:8, flexShrink:0 }}>
+                      <HeartBtn id={r.id} favs={favs} toggle={toggleFav} size={20} />
+                      <Stars rating={r.overallRating} size={12} />
+                    </div>
+                  </div>
+                  <div style={{ display:"flex", gap:7, marginTop:12, flexWrap:"wrap" }}>
+                    <button onClick={() => setPage({ view:"restaurant", id:r.id })} className="bp"
+                      style={{ background:r.accentColor, color:"#0e0c09", padding:"8px 16px", borderRadius:7, fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.07em" }}>
+                      VIEW MENU →
+                    </button>
+                    <button onClick={() => setPage("budget")} className="bp"
+                      style={{ background:"#1e1c18", border:"1px solid #3a3228", color:"#aaa", padding:"8px 14px", borderRadius:7, fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.06em" }}>
+                      💰 BUDGET CHECK
+                    </button>
+                    <a href={r.mapLink} target="_blank" rel="noreferrer"
+                      style={{ background:"#1e1c18", border:"1px solid #3a3228", color:"#aaa", padding:"8px 14px", borderRadius:7, fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.06em", display:"inline-flex", alignItems:"center" }}>
+                      🗺️ DIRECTIONS
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {/* Quick compare */}
+          {list.length >= 2 && (
+            <div style={{ background:"#1a1710", border:"1px solid #2a2520", borderRadius:12, padding:"20px 22px" }}>
+              <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#888", letterSpacing:"0.14em", textTransform:"uppercase", marginBottom:14 }}>Quick Compare — Your Saved Picks</p>
+              <div style={{ display:"grid", gridTemplateColumns:`repeat(${Math.min(list.length,4)},1fr)`, gap:10 }}>
+                {list.slice(0,4).map(r => (
+                  <div key={r.id} style={{ textAlign:"center", padding:"12px 8px", background:"#141210", borderRadius:9, border:`1px solid ${r.accentColor}20` }}>
+                    <div style={{ fontSize:24, marginBottom:6 }}>{r.emoji}</div>
+                    <p style={{ fontFamily:"'Playfair Display',serif", fontSize:13, fontWeight:700, color:"#f0e8d8", marginBottom:3 }}>{r.name}</p>
+                    <Stars rating={r.overallRating} size={11} />
+                    <p style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:r.accentColor, marginTop:5, letterSpacing:"0.08em" }}>{r.cuisine}</p>
+                    <p style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:"#666", marginTop:2 }}>{r.capacity} seats</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── MAP ───────────────────────────────────────────────────────────────────────
+const MapView = ({ setPage, favs, toggleFav }) => {
+  const [sel, setSel] = useState(null);
+  const selR = sel ? restaurants.find(r => r.id===sel) : null;
+
+  const zones = [
+    { name:"Midtown",  x:34, y:28, w:24, h:20 },
+    { name:"Downtown", x:18, y:50, w:22, h:20 },
+    { name:"Eastside", x:58, y:44, w:24, h:20 },
+    { name:"Westside", x:6,  y:18, w:22, h:20 },
+    { name:"Northside",x:46, y:8,  w:22, h:17 },
+  ];
+  const roads = [
+    "M0,290 Q200,272 400,290 Q600,308 800,290",
+    "M0,185 Q300,175 500,195 Q660,210 800,185",
+    "M295,0 Q310,130 300,260 Q292,370 305,500",
+    "M148,0 Q143,150 150,300 Q156,400 144,500",
+    "M542,0 Q536,120 552,275 Q562,375 545,500",
+    "M0,375 L800,375",
+    "M0,118 Q400,108 800,128",
+  ];
+
+  return (
+    <div className="fi" style={{ padding:"0 0 60px" }}>
+      <div style={{ padding:"32px 20px 20px", maxWidth:920, margin:"0 auto" }}>
+        <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#c8973a", letterSpacing:"0.2em", textTransform:"uppercase", marginBottom:8 }}>City Map</p>
+        <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(26px,4vw,42px)", fontWeight:900, color:"#f0e8d8", letterSpacing:"-0.02em", marginBottom:6 }}>Find your table</h1>
+        <p style={{ color:"#777", fontSize:13 }}>Click any pin to preview · ♥ pins are your saved favorites</p>
+      </div>
+
+      <div style={{ maxWidth:920, margin:"0 auto", padding:"0 20px" }}>
+        <div style={{ borderRadius:14, overflow:"hidden", border:"1px solid #2a2520", position:"relative" }}>
+          <svg viewBox="0 0 800 500" style={{ width:"100%", display:"block", background:"#0c0b08" }}>
+            <defs>
+              <pattern id="g" width="44" height="44" patternUnits="userSpaceOnUse">
+                <path d="M44 0L0 0 0 44" fill="none" stroke="#17140f" strokeWidth="0.6"/>
+              </pattern>
+              <radialGradient id="glow" cx="50%" cy="50%" r="60%">
+                <stop offset="0%" stopColor="#c8973a" stopOpacity="0.03"/>
+                <stop offset="100%" stopColor="#0c0b08" stopOpacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect width="800" height="500" fill="url(#g)"/>
+            <rect width="800" height="500" fill="url(#glow)"/>
+
+            {zones.map(z => (
+              <g key={z.name}>
+                <rect x={`${z.x}%`} y={`${z.y}%`} width={`${z.w}%`} height={`${z.h}%`} rx="5"
+                  fill="#c8973a" fillOpacity="0.03" stroke="#c8973a" strokeOpacity="0.1" strokeWidth="1"/>
+                <text x={`${z.x+z.w/2}%`} y={`${z.y+z.h/2}%`} textAnchor="middle" dominantBaseline="middle"
+                  fill="#c8973a" fillOpacity="0.18" style={{ fontSize:10.5, fontFamily:"DM Mono,monospace", letterSpacing:"0.14em" }}>
+                  {z.name.toUpperCase()}
+                </text>
+              </g>
+            ))}
+
+            {roads.map((d,i) => <path key={`ra${i}`} d={d} fill="none" stroke="#211d16" strokeWidth={i<5?9:5} strokeLinecap="round"/>)}
+            {roads.map((d,i) => <path key={`rb${i}`} d={d} fill="none" stroke="#1a1710" strokeWidth={i<5?6:3} strokeLinecap="round"/>)}
+
+            {restaurants.map(r => {
+              const cx = (r.mapX/100)*800;
+              const cy = (r.mapY/100)*500;
+              const active = sel===r.id;
+              const isFav  = favs.has(r.id);
+              return (
+                <g key={r.id} style={{ cursor:"pointer" }} onClick={() => setSel(sel===r.id?null:r.id)}>
+                  {active && <>
+                    <circle cx={cx} cy={cy} r="28" fill={r.accentColor} fillOpacity="0.08"
+                      style={{ animation:"ripple 1.8s ease-in-out infinite" }}/>
+                    <circle cx={cx} cy={cy} r="20" fill={r.accentColor} fillOpacity="0.12"/>
+                  </>}
+                  {isFav && <circle cx={cx} cy={cy} r="18" fill="#e05252" fillOpacity="0.15" stroke="#e05252" strokeOpacity="0.3" strokeWidth="1"/>}
+                  <circle cx={cx+1.5} cy={cy+1.5} r="15" fill="rgba(0,0,0,.45)"/>
+                  <circle cx={cx} cy={cy} r="15"
+                    fill={active?r.accentColor:"#161310"}
+                    stroke={isFav?"#e05252":r.accentColor}
+                    strokeWidth={active?0:isFav?2.5:2}/>
+                  <text x={cx} y={cy+1} textAnchor="middle" dominantBaseline="middle" style={{ fontSize:15 }}>{r.emoji}</text>
+                  {isFav && <text x={cx+11} y={cy-11} textAnchor="middle" style={{ fontSize:10 }}>♥</text>}
+                  {active && (
+                    <g>
+                      <rect x={cx-68} y={cy-62} width="136" height="40" rx="6"
+                        fill="#161310" stroke={r.accentColor} strokeOpacity=".35" strokeWidth="1"/>
+                      <text x={cx} y={cy-46} textAnchor="middle" fill="#f0e8d8"
+                        style={{ fontSize:12.5, fontFamily:"Playfair Display,serif", fontWeight:700 }}>{r.name}</text>
+                      <text x={cx} y={cy-30} textAnchor="middle" fill="#888"
+                        style={{ fontSize:10, fontFamily:"DM Mono,monospace" }}>
+                        {r.neighborhood} · ★{r.overallRating}
+                      </text>
+                    </g>
+                  )}
+                </g>
+              );
+            })}
+          </svg>
+
+          <div style={{ position:"absolute", bottom:14, right:14, background:"rgba(12,11,8,.92)", backdropFilter:"blur(10px)", border:"1px solid #2a2520", borderRadius:8, padding:"10px 13px" }}>
+            <p style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color:"#555", letterSpacing:"0.12em", textTransform:"uppercase", marginBottom:6 }}>Locations</p>
+            {restaurants.map(r => (
+              <div key={r.id} style={{ display:"flex", alignItems:"center", gap:5, marginBottom:3 }}>
+                <span style={{ fontSize:11 }}>{r.emoji}</span>
+                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color: favs.has(r.id)?"#e05252":"#999" }}>{r.name}{favs.has(r.id)?" ♥":""}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {selR && (
+          <div className="fi" style={{ marginTop:18, background:"#141210", border:`1px solid ${selR.accentColor}3a`, borderRadius:12, padding:"22px", display:"flex", gap:18, flexWrap:"wrap", alignItems:"flex-start" }}>
+            <div style={{ width:58, height:58, borderRadius:10, flexShrink:0, background:selR.coverColor, backgroundImage:`radial-gradient(circle,${selR.accentColor}38 0%,transparent 70%)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:28 }}>{selR.emoji}</div>
+            <div style={{ flex:1, minWidth:180 }}>
+              <p style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:selR.accentColor, letterSpacing:"0.14em", textTransform:"uppercase", marginBottom:3 }}>{selR.cuisine} · {selR.neighborhood}</p>
+              <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:22, fontWeight:700, color:"#f0e8d8", marginBottom:3 }}>{selR.name}</h2>
+              <p style={{ color:"#777", fontSize:12, marginBottom:7 }}>{selR.tagline}</p>
+              <p style={{ color:"#666", fontSize:11, fontFamily:"'DM Mono',monospace" }}>📍 {selR.address}</p>
+            </div>
+            <div style={{ display:"flex", flexDirection:"column", gap:8, flexShrink:0 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <Stars rating={selR.overallRating} size={13} />
+                <HeartBtn id={selR.id} favs={favs} toggle={toggleFav} size={20} />
+              </div>
+              <button onClick={() => setPage({ view:"restaurant", id:selR.id })} className="bp"
+                style={{ background:selR.accentColor, color:"#0e0c09", padding:"10px 18px", borderRadius:7, fontFamily:"'DM Mono',monospace", fontSize:10.5, letterSpacing:"0.06em" }}>
+                FULL MENU →
+              </button>
+              <div style={{ display:"flex", gap:6 }}>
+                <a href={selR.mapLink} target="_blank" rel="noreferrer" style={{ flex:1, textAlign:"center", background:"#1e1c18", border:"1px solid #3a3228", borderRadius:6, padding:"7px 8px", fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#aaa" }}>🗺 Google</a>
+                <a href={selR.appleMapsLink} target="_blank" rel="noreferrer" style={{ flex:1, textAlign:"center", background:"#1e1c18", border:"1px solid #3a3228", borderRadius:6, padding:"7px 8px", fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#aaa" }}>🍎 Apple</a>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div style={{ marginTop:20, display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(190px,1fr))", gap:9 }}>
+          {restaurants.map(r => (
+            <button key={r.id} onClick={() => setSel(r.id===sel?null:r.id)}
+              style={{ background:sel===r.id?r.accentColor+"12":"#141210", border:`1px solid ${sel===r.id?r.accentColor+"55":favs.has(r.id)?"#e0525240":"#2a2520"}`, borderRadius:8, padding:"11px 13px", textAlign:"left", transition:"all .2s" }}>
+              <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+                <span style={{ fontSize:17 }}>{r.emoji}</span>
+                <div style={{ flex:1 }}>
+                  <p style={{ fontFamily:"'Playfair Display',serif", fontSize:13, fontWeight:700, color:"#f0e8d8" }}>{r.name}</p>
+                  <p style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:r.accentColor }}>{r.neighborhood}</p>
+                </div>
+                {favs.has(r.id) && <span style={{ fontSize:11, color:"#e05252" }}>♥</span>}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── BUDGET ────────────────────────────────────────────────────────────────────
+const Budget = ({ setPage }) => {
+  const [budget, setBudget]       = useState(100);
+  const [guests, setGuests]       = useState(2);
+  const [tip, setTip]             = useState(true);
+  const [drinks, setDrinks]       = useState(0);
+  const [cuisine, setCuisine]     = useState("All");
+  const [ran, setRan]             = useState(false);
+
+  const cuisines = ["All", ...new Set(restaurants.map(r => r.cuisine))];
+  const foodPortion = budget - drinks;
+  const results = useMemo(
+    () => ran ? calcBudgetResults(budget, guests, tip, drinks, cuisine) : [],
+    [ran, budget, guests, tip, drinks, cuisine]
+  );
+  const yes = results.filter(r => r.canAfford);
+  const no  = results.filter(r => !r.canAfford);
+  const rankColors = ["#4ade80","#86efac","#fbbf24","#fb923c"];
+  const reset = () => setRan(false);
+
+  // Drinks slider: max is half the budget
+  const maxDrinks = Math.floor(budget * 0.6);
+
+  return (
+    <div className="fi" style={{ padding:"0 0 80px" }}>
+      <div style={{ padding:"38px 20px 28px", maxWidth:680, margin:"0 auto" }}>
+        <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#c8973a", letterSpacing:"0.2em", textTransform:"uppercase", marginBottom:10 }}>Smart Planner</p>
+        <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(26px,4vw,42px)", fontWeight:900, color:"#f0e8d8", letterSpacing:"-0.02em", marginBottom:8 }}>Budget Calculator</h1>
+        <p style={{ color:"#777", fontSize:14, lineHeight:1.65 }}>Set your total budget, split off drinks, filter by cuisine, and we'll rank every restaurant by value.</p>
+      </div>
+
+      <div style={{ maxWidth:680, margin:"0 auto", padding:"0 20px 28px" }}>
+        <div style={{ background:"#141210", border:"1px solid #2a2520", borderRadius:14, padding:"26px 24px 22px" }}>
+
+          {/* Row 1: Budget + Guests */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:18, marginBottom:22 }}>
+            <div>
+              <label style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#c8973a", letterSpacing:"0.16em", textTransform:"uppercase", display:"block", marginBottom:7 }}>Total Budget (USD)</label>
+              <div style={{ position:"relative" }}>
+                <span style={{ position:"absolute", left:11, top:"50%", transform:"translateY(-50%)", color:"#888", fontSize:17 }}>$</span>
+                <input type="number" min={10} max={5000} value={budget}
+                  onChange={e => { setBudget(Number(e.target.value)||0); reset(); }}
+                  style={{ width:"100%", padding:"11px 11px 11px 26px", background:"#1a1710", border:"1px solid #3a3228", borderRadius:7, color:"#f0e8d8", fontSize:24, fontFamily:"'Playfair Display',serif", fontWeight:700, outline:"none" }}/>
+              </div>
+            </div>
+            <div>
+              <label style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#c8973a", letterSpacing:"0.16em", textTransform:"uppercase", display:"block", marginBottom:7 }}>Party Size</label>
+              <div style={{ display:"flex", gap:6 }}>
+                {[1,2,3,4,5,6].map(n => (
+                  <button key={n} onClick={() => { setGuests(n); reset(); }}
+                    style={{ flex:1, padding:"11px 0", borderRadius:7, fontSize:14, fontWeight:600, background:guests===n?"#c8973a":"#1a1710", color:guests===n?"#0e0c09":"#777", border:`1px solid ${guests===n?"#c8973a":"#3a3228"}`, transition:"all .15s" }}>{n}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Drinks Budget Slider */}
+          <div style={{ marginBottom:20 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+              <label style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#5b8dd9", letterSpacing:"0.16em", textTransform:"uppercase" }}>
+                🍷 Drinks Budget
+              </label>
+              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:13, color: drinks>0?"#5b8dd9":"#555" }}>${drinks}</span>
+                {drinks > 0 && (
+                  <button onClick={() => { setDrinks(0); reset(); }}
+                    style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:"#555", background:"#1e1c18", border:"1px solid #3a3228", borderRadius:4, padding:"2px 6px" }}>CLEAR</button>
+                )}
+              </div>
+            </div>
+            <div style={{ position:"relative", padding:"6px 0" }}>
+              {/* Track */}
+              <div style={{ height:4, background:"#1e1c18", borderRadius:2, overflow:"hidden" }}>
+                <div style={{ height:"100%", width:`${maxDrinks>0?(drinks/maxDrinks)*100:0}%`, background:"linear-gradient(90deg,#3a5fa0,#5b8dd9)", borderRadius:2, transition:"width .1s" }}/>
+              </div>
+              <input type="range" min={0} max={maxDrinks} step={5} value={drinks}
+                onChange={e => { setDrinks(Number(e.target.value)); reset(); }}
+                style={{ position:"absolute", inset:0, width:"100%", opacity:0, cursor:"pointer", height:"100%" }}/>
+              {/* Tick labels */}
+              <div style={{ display:"flex", justifyContent:"space-between", marginTop:5 }}>
+                {[0, Math.floor(maxDrinks*0.25), Math.floor(maxDrinks*0.5), Math.floor(maxDrinks*0.75), maxDrinks].map(v => (
+                  <button key={v} onClick={() => { setDrinks(v); reset(); }}
+                    style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color: drinks===v?"#5b8dd9":"#444", background:"none", padding:0 }}>
+                    ${v}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {drinks > 0 && (
+              <div style={{ background:"#1a2030", border:"1px solid #3a5fa040", borderRadius:7, padding:"9px 13px", marginTop:8, display:"flex", justifyContent:"space-between", flexWrap:"wrap", gap:6 }}>
+                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:10.5, color:"#5b8dd9" }}>🍷 ${drinks} for drinks ({guests} guests)</span>
+                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:10.5, color:"#c8973a" }}>🍽️ ${foodPortion} left for food</span>
+              </div>
+            )}
+          </div>
+
+          {/* Cuisine Filter */}
+          <div style={{ marginBottom:20 }}>
+            <label style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#c8973a", letterSpacing:"0.16em", textTransform:"uppercase", display:"block", marginBottom:8 }}>Filter by Cuisine</label>
+            <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+              {cuisines.map(c => (
+                <button key={c} onClick={() => { setCuisine(c); reset(); }}
+                  style={{ padding:"6px 13px", borderRadius:20, fontSize:11.5, fontFamily:"'DM Mono',monospace", border:`1px solid ${cuisine===c?"#c8973a":"#2a2520"}`, background:cuisine===c?"#c8973a18":"transparent", color:cuisine===c?"#c8973a":"#666", letterSpacing:"0.05em", whiteSpace:"nowrap", transition:"all .18s" }}>
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Tip Toggle */}
+          <div style={{ display:"flex", alignItems:"center", gap:11, marginBottom:22 }}>
+            <button onClick={() => { setTip(!tip); reset(); }}
+              style={{ width:42, height:22, borderRadius:11, position:"relative", background:tip?"#c8973a":"#2a2520", transition:"background .2s", flexShrink:0 }}>
+              <span style={{ position:"absolute", top:2, left:tip?22:2, width:18, height:18, borderRadius:9, background:"#fff", transition:"left .2s" }}/>
+            </button>
+            <span style={{ fontSize:13, color:"#999" }}>Include 20% tip in total</span>
+            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#555", marginLeft:"auto" }}>
+              {tip ? `food budget: $${(foodPortion/1.2).toFixed(0)}` : `food budget: $${foodPortion}`}
+            </span>
+          </div>
+
+          {/* Summary bar */}
+          <div style={{ background:"#1a1710", borderRadius:7, padding:"10px 14px", marginBottom:18 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", flexWrap:"wrap", gap:8 }}>
+              <span style={{ fontSize:12.5, color:"#777" }}>${budget} total · {guests} {guests===1?"guest":"guests"}{cuisine!=="All"?` · ${cuisine}`:""}</span>
+              <div style={{ display:"flex", gap:12 }}>
+                {drinks>0 && <span style={{ fontSize:12, color:"#5b8dd9", fontFamily:"'DM Mono',monospace" }}>🍷 ${drinks}</span>}
+                <span style={{ fontSize:12, color:"#c8973a", fontFamily:"'DM Mono',monospace" }}>🍽️ ~${((tip?foodPortion/1.2:foodPortion)/guests).toFixed(0)}/person food</span>
+              </div>
+            </div>
+          </div>
+
+          <button onClick={() => setRan(true)} className="bp"
+            style={{ width:"100%", padding:"15px", borderRadius:9, background:"linear-gradient(135deg,#c8973a,#dea848)", color:"#0e0c09", fontFamily:"'DM Mono',monospace", fontSize:12, letterSpacing:"0.1em", fontWeight:600 }}>
+            FIND THE BEST VALUE →
+          </button>
+        </div>
+      </div>
+
+      {/* Results */}
+      {ran && (
+        <div className="fi" style={{ maxWidth:680, margin:"0 auto", padding:"0 20px" }}>
+          {results.length===0 && (
+            <div style={{ background:"#141210", border:"1px solid #2a2520", borderRadius:12, padding:"32px", textAlign:"center" }}>
+              <p style={{ fontSize:28, marginBottom:10 }}>🍴</p>
+              <p style={{ fontFamily:"'Playfair Display',serif", fontSize:18, color:"#f0e8d8", marginBottom:6 }}>No {cuisine!=="All"?cuisine+" ":""} restaurants to compare</p>
+              <p style={{ color:"#777", fontSize:13 }}>Try selecting "All" cuisines or adjusting your budget.</p>
+            </div>
+          )}
+
+          {yes.length===0 && results.length>0 && (
+            <div style={{ background:"#180e0e", border:"1px solid #4a2020", borderRadius:12, padding:"28px", textAlign:"center", marginBottom:16 }}>
+              <p style={{ fontSize:30, marginBottom:10 }}>😬</p>
+              <p style={{ fontFamily:"'Playfair Display',serif", fontSize:19, color:"#f0e8d8", marginBottom:6 }}>Budget's tight for {guests} {guests===1?"guest":"guests"}</p>
+              <p style={{ color:"#777", fontSize:13 }}>Try increasing your budget, reducing drinks, or lowering party size.</p>
+            </div>
+          )}
+
+          {yes.length>0 && (
+            <>
+              <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}>
+                <span style={{ fontSize:18 }}>✅</span>
+                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#4ade80", letterSpacing:"0.15em", textTransform:"uppercase" }}>
+                  {yes.length} restaurant{yes.length>1?"s":""} within budget — ranked by value
+                </span>
+              </div>
+              {yes.map((res, i) => <ResultCard key={res.r.id} res={res} rank={i+1} color={rankColors[i]||"#aaa"} setPage={setPage} guests={guests} />)}
+            </>
+          )}
+
+          {no.length>0 && (
+            <>
+              <div style={{ display:"flex", alignItems:"center", gap:8, margin:"26px 0 14px" }}>
+                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#666", letterSpacing:"0.15em", textTransform:"uppercase" }}>
+                  ↑ just over budget — worth the stretch?
+                </span>
+              </div>
+              {no.slice(0,2).map(res => <ResultCard key={res.r.id} res={res} rank={null} color="#555" setPage={setPage} guests={guests} dim />)}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ResultCard = ({ res, rank, color, setPage, guests, dim }) => {
+  const [open, setOpen] = useState(rank===1);
+  const { r, meal, foodTotal, tipAmt, drinksBudget, grandTotal, avgRating, canAfford, leftover, valueScore } = res;
+
+  return (
+    <div style={{ background:dim?"#111009":"#141210", border:`1px solid ${dim?"#2a2520":color+"3a"}`, borderRadius:12, marginBottom:14, overflow:"hidden", opacity:dim?.78:1 }}>
+      <div style={{ padding:"18px 18px 14px", display:"flex", gap:13, alignItems:"flex-start" }}>
+        {rank && (
+          <div style={{ width:30, height:30, borderRadius:6, flexShrink:0, background:color+"18", border:`1px solid ${color}44`, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'DM Mono',monospace", fontSize:12, color, fontWeight:700 }}>#{rank}</div>
+        )}
+        <div style={{ flex:1 }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:8 }}>
+            <div>
+              <p style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:r.accentColor, letterSpacing:"0.12em", textTransform:"uppercase", marginBottom:2 }}>{r.emoji} {r.cuisine} · {r.neighborhood}</p>
+              <h3 style={{ fontFamily:"'Playfair Display',serif", fontSize:19, fontWeight:700, color:"#f0e8d8" }}>{r.name}</h3>
+            </div>
+            <div style={{ textAlign:"right" }}>
+              <div style={{ fontFamily:"'Playfair Display',serif", fontSize:28, fontWeight:900, color:canAfford?color:"#e05252", lineHeight:1 }}>${grandTotal.toFixed(0)}</div>
+              <p style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color:"#555", letterSpacing:"0.07em" }}>TOTAL</p>
+            </div>
+          </div>
+
+          {/* Stats grid */}
+          <div style={{ display:"flex", gap:7, flexWrap:"wrap", marginTop:10 }}>
+            {[
+              ["PER PERSON", `$${(grandTotal/guests).toFixed(0)}`],
+              ["FOOD", `$${foodTotal.toFixed(0)}`],
+              ["TIP", `$${tipAmt.toFixed(0)}`],
+              drinksBudget>0?["🍷 DRINKS",`$${drinksBudget.toFixed(0)}`,"#5b8dd9"]:null,
+              canAfford?["LEFT OVER",`$${leftover.toFixed(0)}`,color]:null,
+            ].filter(Boolean).map(([k,v,c]) => (
+              <div key={k} style={{ background:c?c+"12":"#1a1710", border:c&&c!==color?`1px solid ${c}28`:"none", borderRadius:6, padding:"5px 10px" }}>
+                <p style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color:"#555", marginBottom:1 }}>{k}</p>
+                <p style={{ fontFamily:"'DM Mono',monospace", fontSize:12.5, color:c||"#e8e0d0" }}>{v}</p>
+              </div>
+            ))}
+            <div style={{ background:"#1a1710", borderRadius:6, padding:"5px 10px" }}>
+              <p style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color:"#555", marginBottom:1 }}>AVG RATING</p>
+              <Stars rating={avgRating} size={11} />
+            </div>
+          </div>
+
+          {canAfford && (
+            <div style={{ marginTop:11 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:3 }}>
+                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color:"#555", letterSpacing:"0.1em" }}>VALUE SCORE</span>
+                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color }}>{valueScore.toFixed(1)}/10</span>
+              </div>
+              <div style={{ height:3, background:"#1a1710", borderRadius:2, overflow:"hidden" }}>
+                <div style={{ height:"100%", width:`${Math.min(100,valueScore*10)}%`, background:`linear-gradient(90deg,${color}55,${color})`, borderRadius:2, transition:"width .7s ease" }}/>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div style={{ borderTop:"1px solid #1e1c18" }}>
+        <button onClick={() => setOpen(!open)}
+          style={{ width:"100%", padding:"10px 18px", display:"flex", justifyContent:"space-between", alignItems:"center", fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#777", letterSpacing:"0.1em", textTransform:"uppercase" }}>
+          <span>🍽️ Suggested Order for {guests} {guests===1?"guest":"guests"}</span>
+          <span style={{ transition:"transform .2s", transform:open?"rotate(180deg)":"none" }}>▾</span>
+        </button>
+
+        {open && (
+          <div className="fi" style={{ padding:"0 18px 18px" }}>
+            {meal.length===0
+              ? <p style={{ color:"#555", fontSize:12 }}>No affordable combo found within this budget.</p>
+              : <>
+                  <div style={{ display:"flex", flexDirection:"column", gap:7, marginBottom:12 }}>
+                    {meal.map((item, idx) => (
+                      <div key={idx} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", background:"#1a1710", borderRadius:7, padding:"9px 13px", gap:10 }}>
+                        <div style={{ flex:1 }}>
+                          <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap", marginBottom:2 }}>
+                            <Chip label={item.course} accent={r.accentColor} />
+                            <span style={{ fontFamily:"'Playfair Display',serif", fontSize:14, color:"#f0e8d8" }}>{item.name}</span>
+                          </div>
+                          <p style={{ fontSize:11.5, color:"#666", lineHeight:1.4 }}>{item.desc}</p>
+                        </div>
+                        <div style={{ textAlign:"right", flexShrink:0 }}>
+                          <p style={{ fontFamily:"'DM Mono',monospace", fontSize:13, color:r.accentColor }}>${item.price}</p>
+                          <Stars rating={item.rating} size={10} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Full breakdown */}
+                  <div style={{ background:color+"0a", border:`1px solid ${color}1a`, borderRadius:8, padding:"12px 14px", marginBottom:12 }}>
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(110px,1fr))", gap:10 }}>
+                      {[
+                        ["Food /person", `$${(foodTotal/guests).toFixed(2)}`],
+                        [`Food ×${guests}`, `$${foodTotal.toFixed(2)}`],
+                        ["Tip (20%)", `$${tipAmt.toFixed(2)}`],
+                        ...(drinksBudget>0?[["🍷 Drinks",`$${drinksBudget.toFixed(2)}`]]: []),
+                        ["Grand Total", `$${grandTotal.toFixed(2)}`],
+                        ...(canAfford?[["Your Budget",`$${(grandTotal+leftover).toFixed(0)}`]]: []),
+                      ].map(([k,v]) => (
+                        <div key={k}>
+                          <p style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color:"#555", marginBottom:2 }}>{k.toUpperCase()}</p>
+                          <p style={{ fontFamily:"'DM Mono',monospace", fontSize:14, color: k==="Grand Total"?color:k.includes("Budget")?"#4ade80":"#e8e0d0" }}>{v}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+            }
+            <button onClick={() => setPage({ view:"restaurant", id:r.id })} className="bp"
+              style={{ width:"100%", padding:"11px", borderRadius:7, background:r.accentColor, color:"#0e0c09", fontFamily:"'DM Mono',monospace", fontSize:10.5, letterSpacing:"0.07em" }}>
+              VIEW FULL MENU →
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── RESTAURANT PAGE ───────────────────────────────────────────────────────────
+const Restaurant = ({ id, setPage, favs, toggleFav }) => {
+  const r = restaurants.find(x => x.id===id);
+  const [tab, setTab] = useState("menu");
+  if (!r) return <p style={{ padding:40, color:"#666" }}>Not found.</p>;
+  const top = [...r.menu.flatMap(c=>c.items)].sort((a,b)=>b.rating-a.rating).slice(0,3);
+
+  return (
+    <div className="fi">
+      <div style={{ padding:"18px 20px 0", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <button onClick={() => setPage("home")} style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:"#777", letterSpacing:"0.08em" }}>← BACK</button>
+        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+          <span style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color: favs.has(r.id)?"#e05252":"#555" }}>
+            {favs.has(r.id)?"♥ SAVED":"♡ SAVE"}
+          </span>
+          <HeartBtn id={r.id} favs={favs} toggle={toggleFav} size={24} />
+        </div>
+      </div>
+
+      <div style={{ margin:"16px 20px", borderRadius:14, height:"clamp(170px,27vw,270px)", background:r.coverColor, backgroundImage:`radial-gradient(ellipse at 20% 60%,${r.accentColor}48 0%,transparent 55%),radial-gradient(ellipse at 80% 20%,${r.accentColor}1a 0%,transparent 50%)`, display:"flex", alignItems:"flex-end", justifyContent:"space-between", padding:"24px 28px", position:"relative", overflow:"hidden" }}>
+        <div style={{ position:"absolute", right:28, top:"50%", transform:"translateY(-50%)", fontSize:96, opacity:.13 }}>{r.emoji}</div>
+        <div>
+          <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:r.accentColor, letterSpacing:"0.16em", textTransform:"uppercase", marginBottom:7 }}>{r.cuisine} · {r.neighborhood}</p>
+          <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(26px,5vw,50px)", fontWeight:900, color:"#f0e8d8", lineHeight:1.05, letterSpacing:"-0.02em" }}>{r.name}</h1>
+          <p style={{ color:"#bbb", fontSize:13, marginTop:5 }}>{r.tagline}</p>
+        </div>
+        <div style={{ textAlign:"right", flexShrink:0 }}>
+          <div style={{ fontFamily:"'Playfair Display',serif", fontSize:38, fontWeight:900, color:r.accentColor, lineHeight:1 }}>{r.overallRating}</div>
+          <Stars rating={r.overallRating} size={13} />
+          <p style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:"#777", marginTop:3, letterSpacing:"0.08em" }}>OVERALL</p>
+        </div>
+      </div>
+
+      <div style={{ display:"flex", gap:7, padding:"0 20px 22px", overflowX:"auto" }}>
+        {r.highlights.map(h => <Chip key={h} label={h} accent={r.accentColor} />)}
+      </div>
+      <div style={{ display:"flex", borderBottom:"1px solid #2a2520", padding:"0 20px", marginBottom:28 }}>
+        {[["menu","Menu"],["info","Info & Hours"],["visit","Visit"]].map(([k,l]) => (
+          <button key={k} onClick={() => setTab(k)}
+            style={{ padding:"11px 17px", fontFamily:"'DM Mono',monospace", fontSize:10.5, letterSpacing:"0.1em", textTransform:"uppercase", color:tab===k?r.accentColor:"#666", borderBottom:`2px solid ${tab===k?r.accentColor:"transparent"}`, transition:"all .2s", marginBottom:-1 }}>
+            {l}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ padding:"0 20px", maxWidth:840, margin:"0 auto" }}>
+        {tab==="menu" && (
+          <div className="fi">
+            <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:r.accentColor, letterSpacing:"0.16em", textTransform:"uppercase", marginBottom:14 }}>★ Top Rated</p>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(210px,1fr))", gap:11, marginBottom:36 }}>
+              {top.map(item => (
+                <div key={item.name} style={{ background:r.accentColor+"0e", border:`1px solid ${r.accentColor}28`, borderRadius:9, padding:"15px 16px" }}>
+                  <Stars rating={item.rating} size={12} />
+                  <p style={{ fontFamily:"'Playfair Display',serif", fontSize:15, fontWeight:700, color:"#f0e8d8", marginTop:5, marginBottom:3 }}>{item.name}</p>
+                  <p style={{ fontSize:12, color:"#777", lineHeight:1.4 }}>{item.desc}</p>
+                  <p style={{ fontFamily:"'DM Mono',monospace", fontSize:12.5, color:r.accentColor, marginTop:9 }}>${item.price}</p>
+                </div>
+              ))}
+            </div>
+            {r.menu.map(sec => (
+              <div key={sec.category} style={{ marginBottom:36 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:11, marginBottom:17 }}>
+                  <h3 style={{ fontFamily:"'Playfair Display',serif", fontSize:22, fontWeight:700, color:"#f0e8d8" }}>{sec.category}</h3>
+                  <div style={{ flex:1, height:1, background:"#2a2520" }}/>
+                </div>
+                {sec.items.map(item => (
+                  <div key={item.name} style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", padding:"14px 0", borderBottom:"1px solid #1e1c18", gap:14 }}>
+                    <div style={{ flex:1 }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:7, flexWrap:"wrap", marginBottom:3 }}>
+                        <span style={{ fontFamily:"'Playfair Display',serif", fontSize:16, fontWeight:600, color:"#f0e8d8" }}>{item.name}</span>
+                        {item.tags.map(t => <Chip key={t} label={t} accent={r.accentColor} />)}
+                      </div>
+                      <p style={{ color:"#666", fontSize:12.5, lineHeight:1.5, marginBottom:5 }}>{item.desc}</p>
+                      <Stars rating={item.rating} size={11} />
+                    </div>
+                    <p style={{ fontFamily:"'DM Mono',monospace", fontSize:14, color:r.accentColor, flexShrink:0 }}>${item.price.toFixed(2)}</p>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+        {tab==="info" && (
+          <div className="fi" style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))", gap:16, paddingBottom:60 }}>
+            <div style={{ background:"#141210", border:"1px solid #2a2520", borderRadius:11, padding:"22px" }}>
+              <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:r.accentColor, letterSpacing:"0.14em", textTransform:"uppercase", marginBottom:14 }}>Hours</p>
+              {Object.entries(r.hours).map(([d,t]) => (
+                <div key={d} style={{ display:"flex", justifyContent:"space-between", padding:"7px 0", borderBottom:"1px solid #1e1c18", fontSize:13 }}>
+                  <span style={{ color:"#aaa" }}>{d}</span>
+                  <span style={{ color:"#e8e0d0", fontFamily:"'DM Mono',monospace", fontSize:11.5 }}>{t}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ background:"#141210", border:"1px solid #2a2520", borderRadius:11, padding:"22px" }}>
+              <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:r.accentColor, letterSpacing:"0.14em", textTransform:"uppercase", marginBottom:14 }}>Capacity</p>
+              <div style={{ textAlign:"center", padding:"14px 0" }}>
+                <div style={{ fontFamily:"'Playfair Display',serif", fontSize:52, fontWeight:900, color:"#f0e8d8", lineHeight:1 }}>{r.capacity}</div>
+                <p style={{ color:"#777", fontSize:12, marginTop:5 }}>seats</p>
+              </div>
+            </div>
+            <div style={{ background:"#141210", border:"1px solid #2a2520", borderRadius:11, padding:"22px", gridColumn:"1/-1" }}>
+              <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:r.accentColor, letterSpacing:"0.14em", textTransform:"uppercase", marginBottom:14 }}>Ordering & Pickup</p>
+              <p style={{ color:"#ccc", fontSize:14, lineHeight:1.7 }}>{r.howToOrder}</p>
+            </div>
+          </div>
+        )}
+        {tab==="visit" && (
+          <div className="fi" style={{ paddingBottom:60 }}>
+            <div style={{ background:"#141210", border:"1px solid #2a2520", borderRadius:11, padding:"24px", marginBottom:16 }}>
+              <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:r.accentColor, letterSpacing:"0.14em", textTransform:"uppercase", marginBottom:14 }}>Reservations & RSVP</p>
+              {r.rsvp.value
+                ? <a href={r.rsvp.type==="phone"?`tel:${r.rsvp.value}`:r.rsvp.value} target={r.rsvp.type==="link"?"_blank":undefined} rel="noreferrer" className="bp"
+                    style={{ display:"inline-flex", alignItems:"center", gap:7, background:r.accentColor, color:"#0e0c09", padding:"12px 24px", borderRadius:7, fontFamily:"'DM Mono',monospace", fontSize:12, letterSpacing:"0.05em" }}>
+                    {r.rsvp.type==="phone"?"📞":"🔗"} {r.rsvp.label}
+                  </a>
+                : <p style={{ background:"#1a1710", borderRadius:7, padding:"14px 18px", color:"#aaa", fontSize:13 }}>🚶 {r.rsvp.label} — no advance booking needed.</p>
+              }
+            </div>
+            <div style={{ background:"#141210", border:"1px solid #2a2520", borderRadius:11, overflow:"hidden" }}>
+              <div style={{ height:200, background:`linear-gradient(135deg,#1a1710 0%,${r.accentColor}0e 100%)`, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:10, position:"relative" }}>
+                <div style={{ fontSize:44 }}>📍</div>
+                <p style={{ fontFamily:"'Playfair Display',serif", fontSize:17, color:"#f0e8d8" }}>{r.name}</p>
+                <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10.5, color:"#777", letterSpacing:"0.08em" }}>{r.address}</p>
+                <svg style={{ position:"absolute", inset:0, width:"100%", height:"100%", opacity:.05 }}>
+                  {[...Array(8)].map((_,i)=><line key={`v${i}`} x1={`${(i+1)*12.5}%`} y1="0" x2={`${(i+1)*12.5}%`} y2="100%" stroke="#c8973a" strokeWidth="1"/>)}
+                  {[...Array(5)].map((_,i)=><line key={`h${i}`} x1="0" y1={`${(i+1)*16.7}%`} x2="100%" y2={`${(i+1)*16.7}%`} stroke="#c8973a" strokeWidth="1"/>)}
+                </svg>
+              </div>
+              <div style={{ padding:"18px 20px", display:"flex", gap:10, flexWrap:"wrap" }}>
+                <a href={r.mapLink} target="_blank" rel="noreferrer" className="bp"
+                  style={{ flex:1, minWidth:130, display:"flex", alignItems:"center", justifyContent:"center", gap:7, background:r.accentColor, color:"#0e0c09", padding:"11px 16px", borderRadius:7, fontFamily:"'DM Mono',monospace", fontSize:11 }}>
+                  🗺️ Google Maps
+                </a>
+                <a href={r.appleMapsLink} target="_blank" rel="noreferrer" className="bp"
+                  style={{ flex:1, minWidth:130, display:"flex", alignItems:"center", justifyContent:"center", gap:7, background:"#1e1c18", color:"#e8e0d0", border:"1px solid #3a3228", padding:"11px 16px", borderRadius:7, fontFamily:"'DM Mono',monospace", fontSize:11 }}>
+                  🍎 Apple Maps
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── APP ───────────────────────────────────────────────────────────────────────
+export default function App() {
+  const [page, setPage] = useState("home");
+  const { favs, toggle: toggleFav, loaded } = useFavorites();
+  const view = typeof page==="string" ? page : page.view;
+
+  if (!loaded) return (
+    <>
+      <style>{G}</style>
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"center", height:"100vh", gap:12 }}>
+        <span style={{ fontSize:24 }}>🍽️</span>
+        <span style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:"#555", letterSpacing:"0.14em" }}>LOADING TABLEONE…</span>
+      </div>
+    </>
+  );
+
+  return (
+    <>
+      <style>{G}</style>
+      <Nav view={view} setPage={setPage} favCount={favs.size} />
+      {view==="home"       && <Home       setPage={setPage} favs={favs} toggleFav={toggleFav} />}
+      {view==="map"        && <MapView    setPage={setPage} favs={favs} toggleFav={toggleFav} />}
+      {view==="budget"     && <Budget     setPage={setPage} />}
+      {view==="favorites"  && <Favorites  setPage={setPage} favs={favs} toggleFav={toggleFav} />}
+      {view==="restaurant" && <Restaurant id={page.id} setPage={setPage} favs={favs} toggleFav={toggleFav} />}
+      <footer style={{ borderTop:"1px solid #1e1c18", padding:"22px", textAlign:"center" }}>
+        <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#333", letterSpacing:"0.12em" }}>
+          TABLEONE · EVERY DISH, RATED · {new Date().getFullYear()}
+        </p>
+      </footer>
+    </>
+  );
+}
