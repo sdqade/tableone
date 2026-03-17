@@ -144,7 +144,118 @@ const restaurants = [
       ]},
     ],
   },
+{
+  id: "brisk",
+  name: "Brisk",
+  tagline: "Savor the journey — where every dish is a journey for the senses",
+  cuisine: "International",
+  neighborhood: "Lagos",
+  coverColor: "#0d0f1a",
+  accentColor: "#3d4fa0",
+  emoji: "✦",
+  mapX: 50, mapY: 45,
+  address: "Lagos, Nigeria",
+  hours: {
+    "Daily": "10am – 11pm",
+    "Kitchen": "Closes at 9:30pm",
+  },
+  capacity: 60,
+  highlights: ["Brunch 9am–2pm", "A La Carte from Noon", "Prime Cuts & Seafood", "Halal menu"],
+  howToOrder: "Walk-ins welcome, reservations advised. Call ahead for groups. Brunch served 9am–2pm, A La Carte starts at 12 noon. Kitchen closes 9:30pm.",
+  rsvp: { type: "phone", label: "Call to Reserve", value: "+2348164388047" },
+  mapLink: "https://maps.app.goo.gl/gFQnVUx1DaexEKC17",
+  appleMapsLink: "https://maps.app.goo.gl/gFQnVUx1DaexEKC17",
+  overallRating: 4.6,
+  menu: [
+    { category: "Hearty Eggs", items: [
+      { name: "The Mighty English Breakfast", price: 21, rating: 4.6, tags: ["Popular"], desc: "2 eggs your way, plantain or hash browns, grilled tomato, baked beans, beef sausage, grilled mushroom, brioche bread and turkey ham" },
+      { name: "Eggs Benedict", price: 17, rating: 4.5, tags: ["Classic"], desc: "Toasted English muffin, 2 eggs, mixed greens, caramelized onion, guacamole, creamy hollandaise sauce" },
+      { name: "Hash Brown Egg Benedict", price: 15, rating: 4.4, tags: [], desc: "Hash brown patties, 2 eggs, mixed greens, caramelized onion, guacamole, creamy hollandaise" },
+      { name: "Sunny Sourdough", price: 17, rating: 4.5, tags: [], desc: "Sourdough with caramelized onions, guacamole, sundried tomato, sweet pomegranate, roasted almonds and your choice of 2 eggs" },
+      { name: "Egg Wrap Hollandaise", price: 15, rating: 4.3, tags: [], desc: "Over-easy scrambled eggs, crispy beef bacon and gooey mozzarella in a soft wrap, topped with hollandaise sauce" },
+    ]},
+    { category: "Pancakes Fluff", items: [
+      { name: "Wholesome Chicken Pancakes", price: 17, rating: 4.7, tags: ["Popular"], desc: "Cream cheese pancakes topped with plantain, crispy chicken, and maple syrup" },
+      { name: "Good Old-Fashioned Pancakes", price: 13, rating: 4.3, tags: [], desc: "Steamy pancakes topped with butter and maple syrup" },
+      { name: "Blueberry Americana", price: 14, rating: 4.5, tags: ["Vegetarian"], desc: "Fluffy cream cheese pancakes stuffed with fresh blueberries, topped with butter" },
+    ]},
+    { category: "Toasty Delights", items: [
+      { name: "Turkey Chicken Twist", price: 17, rating: 4.4, tags: [], desc: "Brown bread sandwich with chicken breast, tomato, pickles, turkey ham, mozzarella, boiled egg and mayo mustard. Served with fries" },
+      { name: "Halloumi & Me", price: 20, rating: 4.6, tags: ["Vegetarian"], desc: "Grilled halloumi on toast with olive-tomato pate, roasted walnuts, pomegranate seeds, pomegranate molasses and pesto sauce" },
+    ]},
+    { category: "Dolce Corner", items: [
+      { name: "Fruity Yogurt Granola Crunch", price: 15, rating: 4.5, tags: ["Vegetarian"], desc: "Greek yogurt with honey, dried pineapple, fresh apple, granola and shredded coconut" },
+      { name: "Oreo French Toast", price: 18, rating: 4.7, tags: ["Popular"], desc: "Fluffy brioche bun topped with molten white chocolate and crushed Oreo cookies" },
+      { name: "Nutella Indulgence French Toast", price: 18, rating: 4.8, tags: ["Must Try","Popular"], desc: "Fluffy brioche bun topped with caramelized banana, creamy Nutella and chopped almonds" },
+    ]},
+    { category: "Starters and Friends", items: [
+      { name: "Chicken Sliders", price: 21, rating: 4.6, tags: ["Popular"], desc: "Three mini burgers of juicy chicken breast, cheddar cheese, lettuce, pickles and thousand island sauce. Served with fries" },
+      { name: "Pulled Beef Sliders", price: 22, rating: 4.7, tags: ["Popular"], desc: "Mini sliders with succulent pulled beef, crispy flakes, caramelized onions and thousand island dressing. Served with fries" },
+      { name: "Tempura Prawns", price: 23, rating: 4.6, tags: ["Chef's Pick"], desc: "Golden crispy prawns served with chili mayo dip" },
+      { name: "Calamari Crisps", price: 22, rating: 4.5, tags: [], desc: "Golden crispy calamari served with tartar sauce" },
+      { name: "Island Coconut Shrimp", price: 22, rating: 4.8, tags: ["Must Try","Popular"], desc: "Coconut-coated shrimp fried to golden crunch, served with zesty chili mayo and mixed vegetables" },
+      { name: "Kung Pao Chicken Skewers", price: 15, rating: 4.6, tags: ["Popular"], desc: "Tender chicken packed with Asian soy sauce and sesame flavors" },
+      { name: "Mandarin Beef Skewers", price: 15, rating: 4.5, tags: [], desc: "Marinated beef tenderloin with sweet carrots, onions and red cabbage in soy sauce, sesame oil and oyster sauce" },
+      { name: "Hummus with Nachos", price: 15, rating: 4.4, tags: ["Vegetarian"], desc: "Creamy smooth hummus dip served with crispy signature nachos crackers" },
+    ]},
+    { category: "Take a Taco", items: [
+      { name: "Shawarma Rooster", price: 16, rating: 4.5, tags: [], desc: "Tender chicken shawarma with crisp lettuce, tangy pickles, beef hotdog and cumin mayo on soft taco wraps" },
+      { name: "Loaded Beef Shawarma", price: 17, rating: 4.6, tags: ["Popular"], desc: "Juicy beef shawarma, zesty onion, parsley, tomato, pickles, cumin mayo and smoky beef hotdog in soft taco shells" },
+      { name: "Barbecue Beef Tacos", price: 20, rating: 4.5, tags: [], desc: "Soft shell beef tacos with signature beef mix, bbq sauce, bell peppers, tomato, mozzarella and cheddar cheese" },
+      { name: "Prawn Tacos", price: 22, rating: 4.7, tags: ["Chef's Pick"], desc: "Soft chili tacos with succulent prawns, guacamole, pico de gallo and sour cream" },
+      { name: "Dynamite Tacos", price: 28, rating: 4.6, tags: ["Signature"], desc: "Golden shrimp with chili dynamite sauce and special slow salads" },
+    ]},
+    { category: "Burgers", items: [
+      { name: "The Artisanal Classic Burger", price: 30, rating: 4.7, tags: ["Popular"], desc: "Juicy beef patty, honey mustard sauce, caramelized onions, crispy tempura and molten mozzarella. Served with golden fries" },
+      { name: "The Grand Master", price: 35, rating: 4.8, tags: ["Signature","Must Try"], desc: "Premium beef mushroom burger with rich mushroom sauce and honey mustard. Served with fries" },
+    ]},
+    { category: "Forever Salads", items: [
+      { name: "The Caesar", price: 22, rating: 4.4, tags: [], desc: "Romaine lettuce, grilled chicken breast, parmesan, croutons, cherry tomato, caesar dressing" },
+      { name: "Medici Halloumi Salad", price: 27, rating: 4.6, tags: ["Vegetarian"], desc: "Baby arugula, grilled halloumi, cherry tomato, olives, creamy balsamic, sweet pomegranate, roasted walnuts and honey-balsamic dressing" },
+      { name: "Quinoa Medley Salad", price: 22, rating: 4.5, tags: ["Vegetarian"], desc: "Red and white quinoa, mixed greens, dried tomato, roasted hazelnut, dried blueberry and sweet honey-balsamic dressing" },
+      { name: "Shrimpy Salad", price: 30, rating: 4.7, tags: ["Chef's Pick"], desc: "Grilled prawns, avocado, mixed greens, sweet corn, honey lemon oil dressing" },
+      { name: "Steak Salad", price: 24, rating: 4.5, tags: [], desc: "Tenderloin steak atop mixed greens, strawberry, beetroot, cherry tomato and roasted walnut in honey-balsamic dressing" },
+    ]},
+    { category: "Pasta", items: [
+      { name: "Creamy Alfredo", price: 22, rating: 4.6, tags: ["Popular"], desc: "Tagliatelle, creamy white sauce, mushroom, diced onions, grilled or crispy chicken breast, grated parmesan" },
+      { name: "The Beloved Bolognaise", price: 22, rating: 4.5, tags: [], desc: "Spaghetti, minced halal beef, bolognaise sauce, sprinkled parmesan" },
+      { name: "Primera Seafood Pasta", price: 27, rating: 4.7, tags: ["Chef's Pick"], desc: "Tagliatelle, pink sauce, calamari, shrimp, sprinkled parmesan" },
+      { name: "Mamma Mia", price: 22, rating: 4.4, tags: [], desc: "Spaghetti, beef sausage balls, tomato sauce, mixed pepper, onion, mild chili" },
+      { name: "Al Pesto Shrimp Linguini", price: 23, rating: 4.8, tags: ["Must Try","Signature"], desc: "Linguine tossed with hazelnut pesto, tender garlic baby shrimp, onions, parmesan and fresh parsley" },
+    ]},
+    { category: "Prime Cuts", items: [
+      { name: "Lamb Chops", price: 50, rating: 4.9, tags: ["Chef's Pick","Must Try"], desc: "Prime South African lamb chops grilled to succulent perfection. Served with rice, parmesan fries or mashed potato" },
+      { name: "Eye of the Rib (Ribeye)", price: 60, rating: 4.9, tags: ["Signature","Must Try"], desc: "Prime South African ribeye, juicy and well-marbled with bold smoky flavor. Served with rice, parmesan fries or mashed potato" },
+      { name: "Lamb Shank Redemption", price: 40, rating: 4.8, tags: ["Popular"], desc: "Slow-cooked South African lamb shank with demi-glace dressing. Served with rice, parmesan fries or mashed potato" },
+    ]},
+    { category: "Homecoming Stews", items: [
+      { name: "Curry Goat Meat", price: 34, rating: 4.6, tags: ["Popular"], desc: "Curry-marinated goat meat in tomato sauce, fresh cream and coriander. Served with white rice" },
+      { name: "Steamy Turkey Coconut", price: 34, rating: 4.5, tags: [], desc: "Turkey wings skillet in creamy mushroom thyme gravy with Irish potato cubes and coconut rice" },
+    ]},
+    { category: "Crafty Poultry", items: [
+      { name: "Quarter Gourmet Chicken", price: 27, rating: 4.6, tags: ["Popular"], desc: "Seasoned quarter chicken glazed with Nigerian salsa. Served with rice and sautéed vegetables" },
+      { name: "Chicken Schnitzel Reimagined", price: 25, rating: 4.7, tags: ["Signature"], desc: "Crumbed chicken escalope with creamy pink sauce and molten mozzarella, served with pink sauce spaghetti, dried tomato and parsley" },
+    ]},
+    { category: "By the Seaside", items: [
+      { name: "Fish & Chips", price: 26, rating: 4.5, tags: ["Popular"], desc: "Golden crispy croaker fish fillet served with fries and tartar sauce" },
+      { name: "Grilled Scarlet Salmon", price: 40, rating: 4.8, tags: ["Chef's Pick"], desc: "Flaky grilled salmon in katsu sauce with creamy mashed potato and sautéed vegetables" },
+      { name: "Tilapia Chili Fusion", price: 36, rating: 4.6, tags: [], desc: "Grilled whole tilapia with steamed white rice, sautéed vegetables and chili fish sauce. Note: 30 min cooking time" },
+      { name: "Jumbo Prawn with Saffron", price: 40, rating: 4.7, tags: ["Must Try"], desc: "Grilled jumbo prawns served with golden saffron rice and green salad" },
+    ]},
+    { category: "Sides", items: [
+      { name: "Jollof Rice", price: 7, rating: 4.7, tags: ["Popular"], desc: "Classic West African jollof rice" },
+      { name: "Saffron Rice", price: 8, rating: 4.5, tags: [], desc: "Fragrant golden saffron rice" },
+      { name: "French Fries", price: 7, rating: 4.3, tags: [], desc: "Crispy golden fries" },
+      { name: "Crispy Plantain", price: 5, rating: 4.6, tags: ["Popular"], desc: "Golden fried sweet plantain" },
+      { name: "Sautéed Vegetables", price: 7, rating: 4.2, tags: ["Vegetarian"], desc: "Fresh seasonal vegetables, sautéed" },
+      { name: "Mashed Potato", price: 6, rating: 4.3, tags: [], desc: "Creamy smooth mashed potato" },
+    ]},
+  ],
+},
+
 ];
+
+
 
 // ── BUDGET LOGIC ──────────────────────────────────────────────────────────────
 function calcBudgetResults(totalBudget, guests, includeTip, drinksBudget, cuisineFilter) {
