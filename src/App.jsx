@@ -179,6 +179,213 @@ const restaurants = [
     ]},
   ],
 },
+
+{
+  id: "the-smiths",
+  name: "The Smiths",
+  tagline: "Kitchen + Cocktail Room — imaginative cuisine & crafted cocktails",
+  cuisine: "International",
+  neighborhood: "Victoria Island",
+  coverColor: "#0e0c08",
+  accentColor: "#c9a84c",
+  emoji: "🕯️",
+  mapX: 72, mapY: 65,
+  address: "16 Akin Adesola St, Victoria Island, Lagos",
+  hours: {
+    "Mon–Thu": "12pm – 12am",
+    "Fri–Sat": "12pm – 2am",
+    "Sun": "12pm – 11pm",
+  },
+  capacity: 80,
+  highlights: ["Signature cocktails", "Live jazz & DJ nights", "Private dining", "Multicultural menu"],
+  howToOrder: "Walk-ins welcome. Reservations recommended especially on weekends. Call or visit website to book.",
+  rsvp: { type: "phone", label: "Call to Reserve", value: "+2349166414520" },
+  mapLink: "https://maps.google.com/?q=The+Smiths+16+Akin+Adesola+Victoria+Island+Lagos",
+  appleMapsLink: "https://maps.apple.com/?q=The+Smiths+Victoria+Island+Lagos",
+  overallRating: 4.7,
+  menu: [
+    { category: "Starters", items: [
+      { name: "Scallops", price: 30500, rating: 4.9, tags: ["Chef's Pick", "Must Try"], desc: "Butternut squash purée, lemon basil butter, roasted garlic" },
+      { name: "Burrata", price: 45000, rating: 4.8, tags: ["Popular"], desc: "Burrata, berries, parmesan, cherry tomatoes, balsamic, basil. Add truffle" },
+      { name: "Shrimp Tartare", price: 29000, rating: 4.7, tags: ["Signature"], desc: "Cooked shrimp tartare, onion, avocado, capers, chives, sesame oil, citrus-herb sauce" },
+      { name: "Sweet & Tangy Bites", price: 22000, rating: 4.6, tags: ["Popular"], desc: "Boneless chicken in sweet & tangy sauce" },
+      { name: "Calamari & Crispy Prawns", price: 26500, rating: 4.5, tags: [], desc: "Deep fried seafood served with two dipping sauces" },
+      { name: "Prawn Tempura", price: 23000, rating: 4.5, tags: [], desc: "Crispy prawns with dipping sauce" },
+      { name: "House Mezze Board", price: 24000, rating: 4.6, tags: ["Sharing", "Vegetarian"], desc: "Beetroot, pesto, classic hummus topped with crumbled walnut, served with warm pita" },
+      { name: "House Hummus Bowl", price: 15000, rating: 4.4, tags: ["Popular"], desc: "Creamy hummus with caramelised onions and beef suya, served with warm pita" },
+      { name: "Kebab Arayas", price: 16000, rating: 4.5, tags: [], desc: "Minced beef, parsley, onion, mozzarella cheese" },
+      { name: "Mozzarella Sticks", price: 16500, rating: 4.3, tags: [], desc: "Crispy mozzarella served with marinara sauce" },
+    ]},
+    { category: "Seafood", items: [
+      { name: "Grilled Octopus", price: 55000, rating: 4.9, tags: ["Chef's Pick", "Must Try"], desc: "Chilli herb oil, charred pepper, roasted onion, cherry tomatoes, cashew dressing" },
+      { name: "Surf & Turf", price: 95000, rating: 4.9, tags: ["Signature", "Must Try"], desc: "Chargrilled filet steak and prawn, garlic butter, steak sauce" },
+      { name: "Pan-Seared Seabass", price: 52000, rating: 4.8, tags: ["Popular"], desc: "Seabass with mango salsa, mixed vegetables, chargrilled lemon" },
+      { name: "Blackened Salmon", price: 49000, rating: 4.7, tags: ["Popular"], desc: "Salmon filet, creamy lemon sauce, herbed mashed potatoes, mango salsa" },
+      { name: "Chargrilled Prawns", price: 39000, rating: 4.6, tags: [], desc: "Grilled jumbo prawns with garlic, herbs and lemon" },
+      { name: "Creamy Herb Mussels", price: 32000, rating: 4.5, tags: [], desc: "Fresh mussels in a white-wine herb cream, served with toasted bread" },
+    ]},
+    { category: "Meat & Poultry", items: [
+      { name: "Tomahawk Steak", price: 99000, rating: 4.9, tags: ["Signature", "Must Try", "Sharing"], desc: "1kg grilled tomahawk served with steak sauces" },
+      { name: "Filet Mignon", price: 54500, rating: 4.8, tags: ["Chef's Pick"], desc: "250g tenderloin with your choice of sauce" },
+      { name: "Lamb Shank", price: 79000, rating: 4.8, tags: ["Popular"], desc: "6-hour braised lamb served with mashed potatoes" },
+      { name: "Chef Entrecôte", price: 69000, rating: 4.7, tags: ["Signature"], desc: "Pan-seared ribeye, mixed vegetables, special green sauce" },
+      { name: "Lamb Chops", price: 58000, rating: 4.8, tags: ["Popular"], desc: "Grilled lamb rack, chimichurri, tzatziki sauce, sautéed vegetables" },
+      { name: "Whole Roasted Chicken", price: 59000, rating: 4.6, tags: ["Sharing"], desc: "Herb-marinated whole chicken, roasted potatoes and mixed vegetables (feeds 2–3)" },
+      { name: "Molten Lamb", price: 59000, rating: 4.7, tags: ["Popular"], desc: "Slow cooked lamb, warm pita bread, tzatziki, red onions, ripened tomatoes" },
+      { name: "Chicken Tzatziki", price: 32000, rating: 4.5, tags: [], desc: "Grilled chicken kebab, soft pita, grilled onions, tomatoes and tzatziki sauce" },
+    ]},
+    { category: "Burgers", items: [
+      { name: "Bacon Bourbon Burger", price: 32000, rating: 4.7, tags: ["Popular"], desc: "Bourbon bacon jam, beef patty, brioche bun, cheddar cheese, smith sauce, jalapeños" },
+      { name: "Glazed Salmon Burger", price: 36000, rating: 4.6, tags: ["Chef's Pick"], desc: "Seared salmon, marinated cabbage, brioche bun, coleslaw" },
+      { name: "Grilled Chicken Burger", price: 28500, rating: 4.5, tags: [], desc: "Grilled chicken, lettuce, grilled onions, jalapeño, tomato, brioche bun, coleslaw, smith sauce" },
+      { name: "Vegan Burger", price: 34000, rating: 4.4, tags: ["Vegan"], desc: "Plant-based patty, lettuce, onions, tomato, brioche bun, jalapeño, ketchup, mustard" },
+    ]},
+    { category: "Pasta & Co.", items: [
+      { name: "Aglio e Olio Seafood Pasta", price: 43500, rating: 4.8, tags: ["Chef's Pick", "Popular"], desc: "Cherry tomatoes, prawns, mussels, spinach, parmesan, spaghetti" },
+      { name: "Beef Lasagna", price: 37500, rating: 4.7, tags: ["Popular"], desc: "House bolognese, spinach, ricotta, silky béchamel, cheddar & mozzarella cheese" },
+      { name: "Cajun Alfredo", price: 27500, rating: 4.6, tags: [], desc: "Linguine in cream sauce, parmesan. Choice of chicken or grilled prawns" },
+      { name: "Smiths Spaghetti Bolognese", price: 27000, rating: 4.4, tags: [], desc: "House bolognese with parmesan" },
+      { name: "Vodka Rigatoni", price: 25000, rating: 4.5, tags: ["Popular"], desc: "Rigatoni pasta, herbed tomato sauce, topped with parmesan cheese" },
+    ]},
+    { category: "Salads", items: [
+      { name: "Kale Salad", price: 26000, rating: 4.5, tags: ["Vegetarian"], desc: "Kale, cranberries, quinoa, walnuts, sunflower seeds, feta, onion, tomato, spicy house & honey balsamic dressing" },
+      { name: "Caesar Salad", price: 22000, rating: 4.3, tags: [], desc: "Romaine, parmesan, croutons, caesar dressing. Add chicken, prawns, salmon or halloumi" },
+    ]},
+    { category: "Breakfast", items: [
+      { name: "Traditional English Breakfast", price: 23500, rating: 4.6, tags: ["Popular"], desc: "Buttermilk pancakes or french toast, bacon, eggs, sausage, mushrooms, baked beans, grilled tomatoes" },
+      { name: "Smashed Avocado Toast", price: 18000, rating: 4.5, tags: ["Vegetarian"], desc: "Smashed avocado, sweet basil, pomegranate, poached eggs" },
+      { name: "Feta Mushroom Toast", price: 23500, rating: 4.6, tags: ["Popular"], desc: "Feta cheese, smashed avocado, sautéed mushrooms, poached eggs" },
+      { name: "Smoked Salmon Bagel", price: 25000, rating: 4.7, tags: ["Chef's Pick"], desc: "Smoked salmon with herbed cream cheese" },
+      { name: "Fluffy Buttermilk Pancakes", price: 19500, rating: 4.7, tags: ["Popular"], desc: "Choose your topping: Berry Bliss, Blueberry Caviar, Fresh Berries, Strawberry Nutella, Lemon Ricotta or Banana Walnut Foster" },
+      { name: "Belgium Waffles", price: 19500, rating: 4.6, tags: [], desc: "Classic Belgium waffles with your choice of signature toppings" },
+      { name: "Spicy Jalapeño Brisket Omelette", price: 23500, rating: 4.7, tags: ["Popular", "Spicy"], desc: "3 eggs stuffed with beef brisket, tomatoes, peppers, onions, mushrooms, mozzarella & cheddar cheese" },
+      { name: "Lamb Shakshouka", price: 22000, rating: 4.6, tags: ["Popular"], desc: "Savory lamb in a spiced tomato sauce with poached eggs & avocado, served with pita bread" },
+    ]},
+    { category: "Desserts", items: [
+      { name: "Chocolate Chip Cookie Skillet", price: 16500, rating: 4.9, tags: ["Must Try", "Popular"], desc: "Warm chocolate chip cookie skillet served with vanilla ice cream" },
+      { name: "Smiths Cheesecake", price: 15000, rating: 4.7, tags: ["Signature"], desc: "Original, Oreo or Strawberry cheesecake" },
+      { name: "Chocolate Cake", price: 14000, rating: 4.6, tags: ["Popular"], desc: "Fluffy double decker layered chocolate cake" },
+      { name: "Crème Brûlée", price: 11000, rating: 4.5, tags: [], desc: "Custard cream with caramel topping" },
+      { name: "Lemon Cake", price: 14000, rating: 4.4, tags: [], desc: "Lemon cake & cream" },
+    ]},
+    { category: "Signature Cocktails", items: [
+      { name: "Flaming Passion", price: 16800, rating: 4.8, tags: ["Must Try", "Signature"], desc: "Gin aperol, mango, pineapple, lime, smoke bitters and chili — an urban playground special" },
+      { name: "Smiths Pop", price: 15500, rating: 4.7, tags: ["Popular", "Signature"], desc: "Passion fruit, hibiscus, rum, lime, prosecco, peach juice finished with an edible lavender bubble" },
+      { name: "The Messenger", price: 16800, rating: 4.7, tags: ["Signature"], desc: "Clarified cranberry juice, lemon infused vodka, lychee liqueur, elderflower, fresh lime and mint" },
+      { name: "Pour Amore", price: 15200, rating: 4.6, tags: [], desc: "Tenjanku Japanese whisky, campari, amaretto, chocolate bitters, dry vermouth, orange peel over hand crafted ice" },
+      { name: "Smiths Daily", price: 15600, rating: 4.6, tags: ["Popular"], desc: "Coconut & cinnamon infused whisky, falernum, white grapefruit, pineapple, citrus, bitters" },
+      { name: "Honey Spell", price: 18850, rating: 4.7, tags: ["Chef's Pick"], desc: "Pear & ginger, cognac, vermouth, thyme infused honey syrup, verjus, sea salt" },
+      { name: "Burnt Orange", price: 14300, rating: 4.5, tags: [], desc: "Burnt orange infused tequila, grand marnier, pink grapefruit soda, agave & mint bitters, himalayan pink salt" },
+      { name: "OJ Banana Split", price: 15200, rating: 4.5, tags: [], desc: "Almond milk, vanilla vodka, white cacao liqueur, salted caramel rim, banana perfume, bitters" },
+      { name: "Ice on Pots", price: 16800, rating: 4.6, tags: ["Popular"], desc: "Hemp infused rum, lemon grass, berries, guava juice, peach puree, orgeat, ginger, lime, bitters, frozen raspberries" },
+      { name: "Sour Bronx", price: 19100, rating: 4.8, tags: ["Must Try"], desc: "Smoked tequila, lime juice, orange liqueur, sweet white wine, hibiscus & agave, lemon oil" },
+      { name: "Bellini Gourmet", price: 17400, rating: 4.6, tags: [], desc: "Prosecco, peach schnapps, single malt whisky, lime, egg white, vanilla syrup, bitters, raspberry cream" },
+    ]},
+    { category: "Sides", items: [
+      { name: "French Fries", price: 8000, rating: 4.3, tags: [], desc: "Truffle or Parmesan option available" },
+      { name: "Smiths Fried Rice", price: 13000, rating: 4.5, tags: ["Popular"], desc: "Smiths signature fried rice" },
+      { name: "Smoky Jollof", price: 9000, rating: 4.7, tags: ["Popular"], desc: "Smoky West African jollof rice" },
+      { name: "Mashed Potatoes", price: 8000, rating: 4.4, tags: [], desc: "Creamy mashed potatoes, add truffle for extra" },
+      { name: "Sautéed Vegetables", price: 12000, rating: 4.2, tags: ["Vegetarian"], desc: "Fresh seasonal vegetables, sautéed" },
+    ]},
+  ],
+},
+
+{
+  id: "rapa-nui",
+  name: "Rapa Nui",
+  tagline: "Polynesian-Mediterranean restaurant with island soul",
+  cuisine: "Polynesian",
+  neighborhood: "Lagos",
+  coverColor: "#060d14",
+  accentColor: "#4a9abe",
+  emoji: "🗿",
+  mapX: 55, mapY: 30,
+  address: "Lagos, Nigeria",
+  hours: {
+    "Daily": "12pm – late",
+  },
+  capacity: 70,
+  highlights: ["Polynesian ceviches", "Gin Mare partner", "Fresh seafood daily", "Unique island-fusion cuisine"],
+  howToOrder: "Walk-ins welcome. Reservations recommended for groups. Visit website or call to book.",
+  rsvp: { type: "link", label: "Reserve a Table", value: "https://www.rapanuirestolagos.com" },
+  mapLink: "https://maps.google.com/?q=Rapa+Nui+Restaurant+Lagos",
+  appleMapsLink: "https://maps.apple.com/?q=Rapa+Nui+Restaurant+Lagos",
+  overallRating: 4.6,
+  menu: [
+    { category: "Starters", items: [
+      { name: "Fish Croquettes", price: 7900, rating: 4.5, tags: ["Popular"], desc: "Deep fried fish and sweet potato croquettes served with coriander tartar sauce" },
+      { name: "Panko Prawns", price: 11900, rating: 4.6, tags: ["Popular"], desc: "Marinated in lemon-soy sauce, served with pickle ginger mayonnaise" },
+      { name: "Rapa Nui Chicken Spring Rolls", price: 7500, rating: 4.4, tags: [], desc: "Chicken and cabbage served with sweet chili sauce" },
+      { name: "Grilled Octopus", price: 19900, rating: 4.8, tags: ["Chef's Pick", "Must Try"], desc: "Grilled octopus with sautéed sweet potatoes and ginger-chilli sauce" },
+      { name: "Taro Fritto", price: 5900, rating: 4.3, tags: ["Vegetarian"], desc: "Sweet potato bravas in ginger-garlic sauce with spring onions" },
+      { name: "Shrimp Cocktail", price: 7900, rating: 4.5, tags: ["Popular"], desc: "Combination of shrimps, pineapples, cucumbers, avocados and sweet potatoes" },
+      { name: "Sautéed Scallops", price: 18900, rating: 4.8, tags: ["Chef's Pick"], desc: "Scallops in garlic butter and fresh coriander" },
+      { name: "Sea Food Empanadas", price: 8000, rating: 4.5, tags: [], desc: "Calamari, shrimps, fish ragu in combination with vegetables" },
+      { name: "Chicken Wings Rapa Nui Style", price: 12000, rating: 4.6, tags: ["Popular"], desc: "Marinated with garlic, ginger and soy sauce, grilled to perfection and served with lemon aioli sauce" },
+      { name: "Calamari & Prawns", price: 14500, rating: 4.6, tags: ["Popular"], desc: "Sautéed with ginger, garlic and chilli, finished with delicate butter emulsion" },
+      { name: "Prawn Shells", price: 11800, rating: 4.5, tags: [], desc: "White prawns ragu topped with mozzarella, baked in the oven" },
+      { name: "Pork Dumplings Fried", price: 9800, rating: 4.4, tags: [], desc: "Pork with ginger, smoke-flavoured, served with light lemon soy sauce" },
+      { name: "Fish Red Curry Glaze", price: 7900, rating: 4.3, tags: [], desc: "Grilled dice of fish with chili, ginger and mini salad" },
+    ]},
+    { category: "Ika Mata (Polynesian Ceviches)", items: [
+      { name: "Fish Ceviche of the Day", price: 6000, rating: 4.7, tags: ["Signature", "Must Try"], desc: "Fish marinated in lemon and sesame oil, onion and chilli, sweet potatoes and fresh coriander with spring onions" },
+      { name: "Calamari Ceviche", price: 8900, rating: 4.6, tags: ["Popular"], desc: "Boiled prawns mixed with onions, chili, sweet potatoes, lemon, apple vinegar, spring onions and coriander chop" },
+      { name: "Prawns Ceviche", price: 8200, rating: 4.6, tags: ["Popular"], desc: "Boiled prawns with onion and chilli, sweet potatoes, sesame oil, lemon, spring onions and chopped coriander" },
+      { name: "Mixed Polynesian", price: 9500, rating: 4.7, tags: ["Chef's Pick", "Sharing"], desc: "Prawns and calamari ceviche mixed with onion, chilli, sweet potatoes, sesame oil, lemon, spring onions and coriander" },
+    ]},
+    { category: "Salads", items: [
+      { name: "Tropical Seafood Salad", price: 14500, rating: 4.6, tags: ["Popular"], desc: "Seasonal green salad with cucumber, pineapple confit and seafood boil, citric mustard vinaigrette" },
+      { name: "Chicken Sauté Peanuts Salad", price: 12500, rating: 4.5, tags: [], desc: "Seasonal salad with cucumber, sautéed chicken, peanuts, spring onions and mustard vinaigrette" },
+      { name: "Taro Mayo Salad", price: 7900, rating: 4.3, tags: ["Vegetarian"], desc: "Mix of sweet potatoes, green salad and coriander mayonnaise" },
+      { name: "Chicken Bomba", price: 9600, rating: 4.5, tags: ["Popular"], desc: "Deep fried chicken popcorn with spicy coriander sauce in a salad bed" },
+    ]},
+    { category: "Soups", items: [
+      { name: "Red Curry Coconut Seafood Soup", price: 14900, rating: 4.7, tags: ["Chef's Pick"], desc: "Mix of seafood and vegetables infused in rich red curry combination" },
+      { name: "Chicken Rapa Nui Ramen", price: 12900, rating: 4.6, tags: ["Popular"], desc: "Chicken balls in delicious chicken stock with noodles and bok choy" },
+      { name: "Fish Pepper Soup Rapa Nui Style", price: 9800, rating: 4.7, tags: ["Must Try", "Popular"], desc: "Nigeria's best pepper soup with a touch of lemongrass, spring onions and sweet potatoes" },
+    ]},
+    { category: "Mains", items: [
+      { name: "Grilled Tiger Prawns", price: 25900, rating: 4.8, tags: ["Chef's Pick", "Must Try"], desc: "Grilled tiger prawns with ginger butter, garlic and chillies, served with aromatic pesto mashed potatoes" },
+      { name: "Fish Rapa Nui (for 2)", price: 28000, rating: 4.8, tags: ["Signature", "Sharing"], desc: "Whole medium croaker, grilled and served with choice of rice or potatoes" },
+      { name: "Red Curry Barracuda Fish Steak", price: 18000, rating: 4.6, tags: ["Popular"], desc: "Grilled barracuda steak in tomato and red curry sauce served with Rapa Nui signature rice" },
+      { name: "Chicken Pineapple Glaze", price: 17900, rating: 4.6, tags: ["Popular"], desc: "Pan-fried boneless chicken with oyster sauce, pineapple juice and caramelized onions, served with Rapa Nui signature rice" },
+      { name: "Kiko Moa (Grilled Chicken)", price: 16800, rating: 4.7, tags: ["Signature"], desc: "Marinated chicken roulade stuffed with veggies, grilled and served with sautéed cabbage, spring onion rice, island sauce on the side" },
+      { name: "Green Curry and Ginger Fish", price: 12900, rating: 4.5, tags: [], desc: "Croaker fish braised in coconut green curry sauce, served with Rapa Nui signature rice" },
+      { name: "Seafood Coconut Rice", price: 16600, rating: 4.7, tags: ["Popular"], desc: "Calamari, shrimps and dice of fish with onions, bell peppers, garlic, chillies and ginger sautéed in aromatic coconut milk" },
+      { name: "Rapa Nui Noodles", price: 16700, rating: 4.6, tags: ["Popular"], desc: "Noodles served with shrimps and chicken with combination of vegetables and Pan-Asian sauce" },
+      { name: "Sol Fish Lemon", price: 14800, rating: 4.5, tags: [], desc: "Grilled Sol fish cooked in lemon sauce, butter and coriander, served with roasted sweet potatoes and cabbage" },
+      { name: "Pork Ribs", price: 15900, rating: 4.6, tags: ["Popular"], desc: "Cooked in BBQ roasted onion sauce, served with fried potato wedges" },
+      { name: "Kiko Oru (Pork Grill)", price: 12900, rating: 4.5, tags: [], desc: "Marinated pork loin kebab, grilled and glazed with mustard and teriyaki sauce, served with fried sweet potatoes and spicy mayonnaise" },
+      { name: "Grilled Prawns", price: 18000, rating: 4.7, tags: ["Popular"], desc: "Bamboo stick prawns cooked on charcoal with red curry flavours" },
+      { name: "Chicken Green Curry Wings", price: 9600, rating: 4.5, tags: [], desc: "Chicken wings braised in curry sauce, garlic and ginger" },
+    ]},
+    { category: "Sweet Bites", items: [
+      { name: "Tres Leches Cake from La Taverna", price: 8900, rating: 4.8, tags: ["Must Try", "Signature"], desc: "Sponge milk cake covered with roasted meringue" },
+      { name: "Mango Cake", price: 8900, rating: 4.7, tags: ["Popular"], desc: "Mango sponge cake, fresh mango puree and white chocolate" },
+      { name: "Coconut Flan", price: 5900, rating: 4.6, tags: ["Popular"], desc: "Classic Spanish dessert infused in coconut and caramel sauce" },
+      { name: "Ice Cream Coupe", price: 5000, rating: 4.3, tags: [], desc: "Choose 2 flavors, served with chocolate chips and toffee sauce" },
+      { name: "Ice Cream Biscuits", price: 5200, rating: 4.3, tags: [], desc: "Served with caramel popcorn and toffee sauce" },
+    ]},
+    { category: "Signature Cocktails", items: [
+      { name: "Rapa Nui", price: 9500, rating: 4.8, tags: ["Signature", "Must Try"], desc: "Gin Mare, grapes syrup, grapes juice, lemon juice" },
+      { name: "Tikki Tropical", price: 8500, rating: 4.7, tags: ["Popular"], desc: "Rum, passion fruit syrup, lemon juice, pineapple juice and touch of coconut milk" },
+      { name: "Gin Basil", price: 8900, rating: 4.6, tags: ["Popular"], desc: "Gin Mare, basil leaves, lemon juice, syrup, tonic water" },
+      { name: "Anakena", price: 8500, rating: 4.5, tags: [], desc: "Tequila, orange juice, mango spicy syrup" },
+      { name: "Last Summer", price: 7900, rating: 4.4, tags: [], desc: "Vodka, peach puree, orange juice, fresh orange" },
+      { name: "Whiskey Ginger", price: 8000, rating: 4.5, tags: [], desc: "Jack Daniel's Honey, fresh ginger, syrup, sprite" },
+      { name: "Green Day", price: 7900, rating: 4.4, tags: [], desc: "Jack Daniels Tennessee Apple, apple puree, apple juice, lemon juice" },
+      { name: "Sangria Jar (1.5L)", price: 32000, rating: 4.7, tags: ["Sharing", "Popular"], desc: "Spanish red wine, vodka, orange juice, secret and mix of fruit" },
+      { name: "Bubble Sangria (1.5L)", price: 36000, rating: 4.8, tags: ["Sharing", "Must Try"], desc: "White sparkling wine, vodka, pineapple juice, secret and mix of fruit" },
+    ]},
+    { category: "Extras", items: [
+      { name: "Portion of Polynesian Rice", price: 4900, rating: 4.5, tags: [], desc: "Rapa Nui signature Polynesian rice" },
+      { name: "Portion of Plantain", price: 5000, rating: 4.6, tags: ["Popular"], desc: "Golden fried sweet plantain" },
+      { name: "Portion of Sweet Potatoes", price: 3600, rating: 4.3, tags: [], desc: "Roasted sweet potatoes" },
+    ]},
+  ],
+},
+
 ];
 
 
@@ -188,7 +395,6 @@ function calcBudgetResults(totalBudget, guests, includeTip, drinksBudget, cuisin
   const foodOnlyBudget = totalBudget - drinksBudget;
   const foodBudget = includeTip ? foodOnlyBudget / 1.2 : foodOnlyBudget;
   const perPerson = foodBudget / guests;
-  const drinksPerPerson = drinksBudget / guests;
 
   const pool = cuisineFilter === "All"
     ? restaurants
@@ -198,22 +404,50 @@ function calcBudgetResults(totalBudget, guests, includeTip, drinksBudget, cuisin
     const allItems = r.menu.flatMap(c => c.items);
     const byRating = arr => [...arr].sort((a, b) => b.rating - a.rating);
 
-    const mains    = byRating(allItems.filter(i => i.price >= 16));
-    const starters = byRating(allItems.filter(i => i.price < 16 && i.price >= 9));
-    const desserts = byRating(allItems.filter(i => i.price < 14));
+    // Detect price scale — if avg price > 500 it's in Naira thousands
+    const avgPrice = allItems.reduce((s, i) => s + i.price, 0) / Math.max(allItems.length, 1);
+    const isNaira  = avgPrice > 500;
+
+    // Set thresholds based on price scale
+    const mainMin      = isNaira ? 10000 : 15;
+    const starterMax   = isNaira ? 15000 : 18;
+    const starterMin   = isNaira ? 5000  : 7;
+    const dessertMax   = isNaira ? 12000 : 14;
+
+    const mains    = byRating(allItems.filter(i => i.price >= mainMin));
+    const starters = byRating(allItems.filter(i => i.price < starterMax && i.price >= starterMin));
+    const desserts = byRating(allItems.filter(i => i.price <= dessertMax));
 
     let meal = [], spent = 0;
+
     const bestMain = mains.find(i => i.price <= perPerson);
     if (bestMain) { meal.push({ ...bestMain, course: "Main" }); spent += bestMain.price; }
+
     const bestStarter = starters.find(i => spent + i.price <= perPerson);
     if (bestStarter) { meal.push({ ...bestStarter, course: "Starter" }); spent += bestStarter.price; }
-    const bestDessert = desserts.find(i => spent + i.price <= perPerson && i.name !== bestStarter?.name);
+
+    const bestDessert = desserts.find(i =>
+      spent + i.price <= perPerson &&
+      i.name !== bestStarter?.name &&
+      i.name !== bestMain?.name
+    );
     if (bestDessert) { meal.push({ ...bestDessert, course: "Dessert" }); spent += bestDessert.price; }
 
+    // Fallback — find best rated items we can afford
     if (meal.length === 0) {
-      const affordable = byRating(allItems.filter(i => i.price <= foodBudget));
-      meal = affordable.slice(0, 3).map(i => ({ ...i, course: "Dish" }));
-      spent = meal.reduce((s, i) => s + i.price, 0) / Math.max(guests, 1);
+      const affordable = byRating(allItems.filter(i => i.price <= perPerson));
+      if (affordable.length > 0) {
+        let fallbackSpent = 0;
+        const fallback = [];
+        for (const item of affordable) {
+          if (fallbackSpent + item.price <= perPerson && fallback.length < 3) {
+            fallback.push({ ...item, course: "Dish" });
+            fallbackSpent += item.price;
+          }
+        }
+        meal = fallback;
+        spent = fallbackSpent;
+      }
     }
 
     const foodTotal  = spent * guests;
@@ -222,12 +456,19 @@ function calcBudgetResults(totalBudget, guests, includeTip, drinksBudget, cuisin
     const avgRating  = meal.length ? meal.reduce((s, i) => s + i.rating, 0) / meal.length : 0;
     const canAfford  = grandTotal <= totalBudget;
     const leftover   = totalBudget - grandTotal;
-    const valueScore = avgRating > 0 ? Math.min(10, (avgRating / ((foodTotal + tipAmt) / guests)) * 10) : 0;
 
-    return { r, meal, spent, foodTotal, tipAmt, drinksBudget, drinksPerPerson, grandTotal, avgRating, canAfford, leftover, valueScore };
+    // Normalise value score — rating quality relative to % of budget used
+    const budgetUsed = grandTotal / totalBudget;
+    const valueScore = avgRating > 0 && budgetUsed > 0
+      ? Math.min(10, (avgRating / 5) * (1 / budgetUsed) * 5)
+      : 0;
+
+    return { r, meal, spent, foodTotal, tipAmt, drinksBudget, grandTotal, avgRating, canAfford, leftover, valueScore };
   }).sort((a, b) => {
     if (a.canAfford !== b.canAfford) return a.canAfford ? -1 : 1;
     return b.valueScore - a.valueScore;
+  });
+}ore;
   });
 }
 
