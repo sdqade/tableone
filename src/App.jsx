@@ -466,12 +466,10 @@ function calcBudgetResults(totalBudget, guests, includeTip, drinksBudget, cuisin
     return { r, meal, spent, foodTotal, tipAmt, drinksBudget, grandTotal, avgRating, canAfford, leftover, valueScore };
   }).sort((a, b) => {
     if (a.canAfford !== b.canAfford) return a.canAfford ? -1 : 1;
-    return b.valueScore - a.valueScore;
-  });
-}ore;
-  });
-}
-
+return b.valueScore - a.valueScore;
+    });
+  }
+  
 // ── GLOBAL STYLES ─────────────────────────────────────────────────────────────
 const G = `
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');
