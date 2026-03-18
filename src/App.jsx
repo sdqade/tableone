@@ -110,7 +110,75 @@ const restaurants = [
     ]},
   ],
 },
-
+{
+  id: "bamboa",
+  name: "Bamboa",
+  tagline: "Tropical Lagos lounge — pizza, sushi & premium bottles",
+  cuisine: "International",
+  neighborhood: "Lagos",
+  coverColor: "#0a1a0f",
+  accentColor: "#2ecc71",
+  emoji: "🌴",
+  mapX: 62, mapY: 40,
+  address: "Lagos, Nigeria",
+  hours: {
+    "Daily": "Open till late",
+  },
+  capacity: 80,
+  highlights: ["Premium bottle service", "Shisha lounge", "Sushi bar", "Wood-fired pizza"],
+  howToOrder: "Walk-ins welcome. Reservations recommended for groups. Reserve via website.",
+  rsvp: { type: "link", label: "Reserve a Table", value: "https://bamboalagos.com/reserve/" },
+  mapLink: "https://maps.google.com/?q=Bamboa+Lagos",
+  appleMapsLink: "https://maps.apple.com/?q=Bamboa+Lagos",
+  overallRating: 4.5,
+  menu: [
+    { category: "Pizza", items: [
+      { name: "Burrata Mortamelt", price: 36000, rating: 4.8, tags: ["Chef's Pick", "Popular"], desc: "Silky burrata, thinly sliced mortadella, house herb pesto, fire-charred cherry tomatoes, fresh basil, Fior di Latte and Parmigiano-Reggiano, finished with pistachio crumble" },
+      { name: "Bamboa Tradizione", price: 34000, rating: 4.7, tags: ["Signature"], desc: "Parma ham or Bresaola, fresh arugula, basil, Fior di Latte & Parmigiano-Reggiano, finished with aged balsamic reduction" },
+      { name: "Tartufo", price: 28000, rating: 4.6, tags: ["Popular"], desc: "Roasted Cremini mushrooms, black truffle crema, Fior di Latte, fresh arugula" },
+      { name: "Diavola", price: 27000, rating: 4.5, tags: [], desc: "Spicy Italian pepperoni, San Marzano tomato base, Fior di Latte, house-infused chili honey" },
+      { name: "The Yaji Chicken", price: 25000, rating: 4.7, tags: ["Must Try", "Popular"], desc: "Suya-style flame-grilled chicken, fire-roasted bell peppers, smoked suya oil, Fior di Latte, in-house yaji spice blend" },
+      { name: "La Margherita Classica", price: 23000, rating: 4.4, tags: ["Classic"], desc: "San Marzano tomato base, fresh basil, hand-pulled Fior di Latte, aged Parmigiano-Reggiano, extra virgin olive oil" },
+    ]},
+    { category: "Sushi", items: [
+      { name: "Spicy Tuna Sushi", price: 13000, rating: 4.5, tags: ["Popular"], desc: "Saku tuna, sriracha mayo, cucumber, nori, pickled ginger, wasabi" },
+      { name: "Crunchy California Roll", price: 13000, rating: 4.4, tags: [], desc: "Crab, avocado, cucumber, nori, crunchy textures, pickled ginger, wasabi" },
+      { name: "Crispy Prawn Maki", price: 15000, rating: 4.6, tags: ["Chef's Pick"], desc: "Cucumber, avocado, tempura prawn, crispy crumb, wasabi, pickled ginger" },
+    ]},
+    { category: "Small Plates", items: [
+      { name: "Teriyaki Chicken Skewers", price: 18000, rating: 4.6, tags: ["Popular"], desc: "Marinated chicken thigh, grilled, served with chili sauce and baby leaf salad" },
+      { name: "Yaji Beef Suya", price: 12500, rating: 4.7, tags: ["Must Try", "Popular"], desc: "Classic Nigerian suya-style beef skewers with yaji spice blend" },
+    ]},
+    { category: "Main Courses", items: [
+      { name: "Wagyu Beef Burger", price: 35000, rating: 4.7, tags: ["Popular"], desc: "Wagyu beef patty on brioche bun, spicy mayo, caramelized onions, served with French fries or salad" },
+      { name: "Surf & Turf", price: 75000, rating: 4.9, tags: ["Signature", "Must Try"], desc: "Filet mignon and grilled tiger prawns, creamy potato mash and Cajun shrimp sauce" },
+      { name: "Lamb Chops", price: 55000, rating: 4.8, tags: ["Chef's Pick"], desc: "Flame-grilled lamb chops on steamed vegetables with creamy potato mash or French fries" },
+      { name: "Chop My Money", price: 140000, rating: 4.9, tags: ["Signature", "Sharing"], desc: "Flame-grilled tomahawk steak with jollof rice, French fries, side salad and peppercorn sauce" },
+      { name: "Garlic & Chili Grilled Prawns", price: 29000, rating: 4.6, tags: ["Popular"], desc: "Grilled prawns with vegetables in garlic & chili sauce, served with a side of your choice" },
+      { name: "Seafood Pasta", price: 27000, rating: 4.6, tags: ["Popular"], desc: "Creamy linguine with calamari and prawns, finished with chili and fresh parsley" },
+      { name: "Spicy Chicken Alfredo", price: 22000, rating: 4.4, tags: [], desc: "Sautéed chicken & mushroom tossed in spicy creamy sauce" },
+      { name: "Norwegian Salmon", price: 45000, rating: 4.8, tags: ["Chef's Pick"], desc: "Pan-seared salmon on seasonal vegetables, chili and garlic sauce, served with a side of your choice" },
+      { name: "Chicken Arrabiata", price: 22000, rating: 4.3, tags: [], desc: "Penne pasta with chicken pieces, confit tomatoes, Parmesan cheese" },
+      { name: "Danfo Burger Drop", price: 25000, rating: 4.5, tags: ["Popular"], desc: "3 chargrilled beef sliders with lettuce, tomato, cheddar, Marie rose, red cabbage coleslaw and French fries" },
+    ]},
+    { category: "Salads", items: [
+      { name: "Caesar Salad", price: 23000, rating: 4.3, tags: [], desc: "Romaine lettuce, iceberg lettuce, cherry tomatoes, olives, Parmesan, croutons" },
+      { name: "Chicken Caesar Salad", price: 25000, rating: 4.5, tags: ["Popular"], desc: "Crisp romaine and iceberg, classic Caesar dressing, grilled chicken, Parmesan, croutons, cherry tomatoes and olives" },
+      { name: "Prawn Caesar Salad", price: 28000, rating: 4.6, tags: ["Chef's Pick"], desc: "Romaine and iceberg, creamy Caesar dressing, grilled prawns, Parmesan, croutons, cherry tomatoes and olives" },
+    ]},
+    { category: "Desserts", items: [
+      { name: "Chocolate Torte", price: 15000, rating: 4.7, tags: ["Popular"], desc: "Warm chocolate torte served with strawberry ice cream, strawberry and berry purée" },
+      { name: "Ice Cream", price: 12000, rating: 4.2, tags: [], desc: "Assorted ice cream scoop" },
+    ]},
+    { category: "Sides", items: [
+      { name: "French Fries", price: 6000, rating: 4.3, tags: [], desc: "Crispy golden fries" },
+      { name: "Potato Mash", price: 7000, rating: 4.4, tags: [], desc: "Creamy smooth mashed potato" },
+      { name: "Jollof Rice", price: 7000, rating: 4.6, tags: ["Popular"], desc: "Classic West African jollof rice" },
+      { name: "Yam Fries", price: 5000, rating: 4.5, tags: ["Popular"], desc: "Crispy fried yam" },
+      { name: "Fried Plantain", price: 5000, rating: 4.6, tags: ["Popular"], desc: "Golden fried sweet plantain" },
+    ]},
+  ],
+},
 ];
 
 
