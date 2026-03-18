@@ -270,8 +270,7 @@ const HeartBtn = ({ id, favs, toggle, size = 20 }) => {
 const Nav = ({ view, setPage, favCount, currency, setCurrency }) => (
   <nav style={{ position:"sticky", top:0, zIndex:200, background:"rgba(14,12,9,.95)", backdropFilter:"blur(14px)", borderBottom:"1px solid #221f1a", display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 20px", height:58 }}>
     <button onClick={() => setPage("home")} style={{ display:"flex", alignItems:"center", gap:9 }}>
-      <span style={{ fontSize:20 }}>🍽️</span>
-      <span style={{ fontFamily:"'Playfair Display',serif", fontSize:19, fontWeight:700, color:"#f0e8d8", letterSpacing:"-0.02em" }}>DateDayz</span>
+      <img src="/datedayznavlogo.svg" alt="DateDayz" style={{ height:32, width:"auto" }} />
     </button>
     <div style={{ display:"flex", gap:2, alignItems:"center" }}>
       {[["home","Discover"],["map","🗺 Map"],["budget","💰 Budget"],["favorites","♥ Saved"]].map(([k,l]) => (
@@ -312,10 +311,8 @@ const Home = ({ setPage, favs, toggleFav, currency }) => {
       {/* Hero */}
       <div style={{ textAlign:"center", padding:"64px 20px 48px", position:"relative" }}>
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 55% at 50% 0%,#2a1a0435 0%,transparent 70%)", pointerEvents:"none" }}/>
-        <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.22em", color:"#c8973a", textTransform:"uppercase", marginBottom:14 }}>Your city's best tables</p>
-        <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(38px,8vw,76px)", fontWeight:900, lineHeight:1.05, color:"#f0e8d8", letterSpacing:"-0.03em", marginBottom:18 }}>
-          DateDayz,<br /><em style={{ color:"#c8973a" }}>no stress.</em>
-        </h1>
+<p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.22em", color:"#c8973a", textTransform:"uppercase", marginBottom:20 }}>Your city's best tables</p>
+        <img src="/datedayzmainlogo.svg" alt="DateDayz" style={{ height:220, width:"auto", marginBottom:24 }} />
         <p style={{ color:"#888", fontSize:15, maxWidth:420, margin:"0 auto 28px", lineHeight:1.65 }}>
           Not just the restaurant — every item on the menu. Find where to eat and exactly what to order.
         </p>
