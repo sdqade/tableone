@@ -186,6 +186,22 @@ input,select{font-family:'DM Sans',sans-serif;}
 .heart-pop{animation:heartPop .3s ease;}
 `;
 
+// ── CURRENCY ──────────────────────────────────────────────────────────────────
+const NGN_PER_USD = 1400;
+
+function usePrice(currency) {
+  const fmt = (ngn) => {
+    if (currency === "USD") {
+      return `$${(ngn / NGN_PER_USD).toFixed(2)}`;
+    }
+    return `₦${ngn.toLocaleString("en-NG")}`;
+  };
+  const fmtNum = (ngn) => currency === "USD" ? ngn / NGN_PER_USD : ngn;
+  return { fmt, fmtNum, symbol: currency === "USD" ? "$" : "₦" };
+}
+
+
+
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 const Stars = ({ rating, size = 13 }) => {
   const full = Math.floor(rating);
@@ -213,7 +229,7 @@ function useFavorites() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("tableone:favorites");
+      const saved = localStorage.getItem("DateDayz:favorites");
       if (saved) setFavs(new Set(JSON.parse(saved)));
     } catch (_) {}
     setLoaded(true);
@@ -223,7 +239,7 @@ function useFavorites() {
     setFavs(prev => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
-      localStorage.setItem("tableone:favorites", JSON.stringify([...next]));
+      localStorage.setItem("DateDayz:favorites", JSON.stringify([...next]));
       return next;
     });
 }, []);
@@ -251,11 +267,11 @@ const HeartBtn = ({ id, favs, toggle, size = 20 }) => {
 };
 
 // ── NAV ───────────────────────────────────────────────────────────────────────
-const Nav = ({ view, setPage, favCount }) => (
+const Nav = ({ view, setPage, favCount, currency, setCurrency }) => (
   <nav style={{ position:"sticky", top:0, zIndex:200, background:"rgba(14,12,9,.95)", backdropFilter:"blur(14px)", borderBottom:"1px solid #221f1a", display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 20px", height:58 }}>
     <button onClick={() => setPage("home")} style={{ display:"flex", alignItems:"center", gap:9 }}>
       <span style={{ fontSize:20 }}>🍽️</span>
-      <span style={{ fontFamily:"'Playfair Display',serif", fontSize:19, fontWeight:700, color:"#f0e8d8", letterSpacing:"-0.02em" }}>TableOne</span>
+      <span style={{ fontFamily:"'Playfair Display',serif", fontSize:19, fontWeight:700, color:"#f0e8d8", letterSpacing:"-0.02em" }}>DateDayz</span>
     </button>
     <div style={{ display:"flex", gap:2, alignItems:"center" }}>
       {[["home","Discover"],["map","🗺 Map"],["budget","💰 Budget"],["favorites","♥ Saved"]].map(([k,l]) => (
@@ -272,12 +288,17 @@ const Nav = ({ view, setPage, favCount }) => (
           )}
         </button>
       ))}
+    <button onClick={() => setCurrency(c => c === "NGN" ? "USD" : "NGN")}
+        style={{ fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.08em", padding:"5px 10px", borderRadius:6, border:"1px solid #3a3228", background:"#1a1710", color:"#c8973a", marginLeft:4, transition:"all .2s" }}>
+        {currency === "NGN" ? "₦ NGN" : "$ USD"}
+      </button>
     </div>
   </nav>
 );
 
 // ── HOME ──────────────────────────────────────────────────────────────────────
-const Home = ({ setPage, favs, toggleFav }) => {
+const Home = ({ setPage, favs, toggleFav, currency }) => {
+  const { fmt } = usePrice(currency);
   const [q, setQ] = useState("");
   const [f, setF] = useState("All");
   const cuisines = ["All", ...new Set(restaurants.map(r => r.cuisine))];
@@ -293,7 +314,7 @@ const Home = ({ setPage, favs, toggleFav }) => {
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 55% at 50% 0%,#2a1a0435 0%,transparent 70%)", pointerEvents:"none" }}/>
         <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.22em", color:"#c8973a", textTransform:"uppercase", marginBottom:14 }}>Your city's best tables</p>
         <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(38px,8vw,76px)", fontWeight:900, lineHeight:1.05, color:"#f0e8d8", letterSpacing:"-0.03em", marginBottom:18 }}>
-          Every dish,<br /><em style={{ color:"#c8973a" }}>rated.</em>
+          DateDayz,<br /><em style={{ color:"#c8973a" }}>no stress.</em>
         </h1>
         <p style={{ color:"#888", fontSize:15, maxWidth:420, margin:"0 auto 28px", lineHeight:1.65 }}>
           Not just the restaurant — every item on the menu. Find where to eat and exactly what to order.
@@ -363,7 +384,8 @@ const Home = ({ setPage, favs, toggleFav }) => {
 };
 
 // ── FAVORITES PAGE ────────────────────────────────────────────────────────────
-const Favorites = ({ setPage, favs, toggleFav }) => {
+const Favorites = ({ setPage, favs, toggleFav, currency }) => {
+  const { fmt } = usePrice(currency);
   const list = restaurants.filter(r => favs.has(r.id));
 
   return (
@@ -613,7 +635,8 @@ const MapView = ({ setPage, favs, toggleFav }) => {
 };
 
 // ── BUDGET ────────────────────────────────────────────────────────────────────
-const Budget = ({ setPage }) => {
+const Budget = ({ setPage, currency }) => {
+  const { fmt, fmtNum, symbol } = usePrice(currency);
   const [budget, setBudget]       = useState(100);
   const [guests, setGuests]       = useState(2);
   const [tip, setTip]             = useState(true);
@@ -649,7 +672,7 @@ const Budget = ({ setPage }) => {
           {/* Row 1: Budget + Guests */}
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:18, marginBottom:22 }}>
             <div>
-              <label style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#c8973a", letterSpacing:"0.16em", textTransform:"uppercase", display:"block", marginBottom:7 }}>Total Budget (USD)</label>
+              <label style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#c8973a", letterSpacing:"0.16em", textTransform:"uppercase", display:"block", marginBottom:7 }}>Total Budget ({currency})</label>
               <div style={{ position:"relative" }}>
                 <span style={{ position:"absolute", left:11, top:"50%", transform:"translateY(-50%)", color:"#888", fontSize:17 }}>$</span>
                 <input type="number" min={10} max={5000} value={budget}
@@ -877,7 +900,7 @@ const ResultCard = ({ res, rank, color, setPage, guests, dim }) => {
                           <p style={{ fontSize:11.5, color:"#666", lineHeight:1.4 }}>{item.desc}</p>
                         </div>
                         <div style={{ textAlign:"right", flexShrink:0 }}>
-                          <p style={{ fontFamily:"'DM Mono',monospace", fontSize:13, color:r.accentColor }}>${item.price}</p>
+                          <p style={{ fontFamily:"'DM Mono',monospace", fontSize:13, color:r.accentColor }}>{fmt(item.price)}</p>
                           <Stars rating={item.rating} size={10} />
                         </div>
                       </div>
@@ -916,7 +939,8 @@ const ResultCard = ({ res, rank, color, setPage, guests, dim }) => {
 };
 
 // ── RESTAURANT PAGE ───────────────────────────────────────────────────────────
-const Restaurant = ({ id, setPage, favs, toggleFav }) => {
+const Restaurant = ({ id, setPage, favs, toggleFav, currency }) => {
+  const { fmt } = usePrice(currency);
   const r = restaurants.find(x => x.id===id);
   const [tab, setTab] = useState("menu");
   if (!r) return <p style={{ padding:40, color:"#666" }}>Not found.</p>;
@@ -970,7 +994,7 @@ const Restaurant = ({ id, setPage, favs, toggleFav }) => {
                   <Stars rating={item.rating} size={12} />
                   <p style={{ fontFamily:"'Playfair Display',serif", fontSize:15, fontWeight:700, color:"#f0e8d8", marginTop:5, marginBottom:3 }}>{item.name}</p>
                   <p style={{ fontSize:12, color:"#777", lineHeight:1.4 }}>{item.desc}</p>
-                  <p style={{ fontFamily:"'DM Mono',monospace", fontSize:12.5, color:r.accentColor, marginTop:9 }}>${item.price}</p>
+                  <p style={{ fontFamily:"'DM Mono',monospace", fontSize:12.5, color:r.accentColor, marginTop:9 }}>{fmt(item.price)}</p>
                 </div>
               ))}
             </div>
@@ -990,7 +1014,7 @@ const Restaurant = ({ id, setPage, favs, toggleFav }) => {
                       <p style={{ color:"#666", fontSize:12.5, lineHeight:1.5, marginBottom:5 }}>{item.desc}</p>
                       <Stars rating={item.rating} size={11} />
                     </div>
-                    <p style={{ fontFamily:"'DM Mono',monospace", fontSize:14, color:r.accentColor, flexShrink:0 }}>${item.price.toFixed(2)}</p>
+                    <p style={{ fontFamily:"'DM Mono',monospace", fontSize:14, color:r.accentColor, flexShrink:0 }}>{fmt(item.price)}</p>
                   </div>
                 ))}
               </div>
@@ -1064,6 +1088,7 @@ const Restaurant = ({ id, setPage, favs, toggleFav }) => {
 // ── APP ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const [page, setPage] = useState("home");
+  const [currency, setCurrency] = useState("NGN");
   const { favs, toggle: toggleFav, loaded } = useFavorites();
   const view = typeof page==="string" ? page : page.view;
 
@@ -1072,7 +1097,7 @@ export default function App() {
       <style>{G}</style>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"center", height:"100vh", gap:12 }}>
         <span style={{ fontSize:24 }}>🍽️</span>
-        <span style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:"#555", letterSpacing:"0.14em" }}>LOADING TABLEONE…</span>
+        <span style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:"#555", letterSpacing:"0.14em" }}>LOADING DateDayz…</span>
       </div>
     </>
   );
@@ -1080,15 +1105,15 @@ export default function App() {
   return (
     <>
       <style>{G}</style>
-      <Nav view={view} setPage={setPage} favCount={favs.size} />
-      {view==="home"       && <Home       setPage={setPage} favs={favs} toggleFav={toggleFav} />}
+      <Nav view={view} setPage={setPage} favCount={favs.size} currency={currency} setCurrency={setCurrency} />
+      {view==="home"       && <Home       setPage={setPage} favs={favs} toggleFav={toggleFav} currency={currency} />}
       {view==="map"        && <MapView    setPage={setPage} favs={favs} toggleFav={toggleFav} />}
-      {view==="budget"     && <Budget     setPage={setPage} />}
-      {view==="favorites"  && <Favorites  setPage={setPage} favs={favs} toggleFav={toggleFav} />}
-      {view==="restaurant" && <Restaurant id={page.id} setPage={setPage} favs={favs} toggleFav={toggleFav} />}
+      {view==="budget"     && <Budget     setPage={setPage} currency={currency} />}
+      {view==="favorites"  && <Favorites  setPage={setPage} favs={favs} toggleFav={toggleFav} currency={currency} />}
+      {view==="restaurant" && <Restaurant id={page.id} setPage={setPage} favs={favs} toggleFav={toggleFav} currency={currency} />}
       <footer style={{ borderTop:"1px solid #1e1c18", padding:"22px", textAlign:"center" }}>
         <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#333", letterSpacing:"0.12em" }}>
-          TABLEONE · EVERY DISH, RATED · {new Date().getFullYear()}
+          DateDayz · EVERY DISH, RATED · {new Date().getFullYear()}
         </p>
       </footer>
     </>

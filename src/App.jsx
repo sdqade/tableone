@@ -363,7 +363,8 @@ const Home = ({ setPage, favs, toggleFav }) => {
 };
 
 // ── FAVORITES PAGE ────────────────────────────────────────────────────────────
-const Favorites = ({ setPage, favs, toggleFav }) => {
+const Favorites = ({ setPage, favs, toggleFav, currency }) => {
+  const { fmt } = usePrice(currency);
   const list = restaurants.filter(r => favs.has(r.id));
 
   return (
@@ -613,7 +614,8 @@ const MapView = ({ setPage, favs, toggleFav }) => {
 };
 
 // ── BUDGET ────────────────────────────────────────────────────────────────────
-const Budget = ({ setPage }) => {
+const Budget = ({ setPage, currency }) => {
+  const { fmt, fmtNum, symbol } = usePrice(currency);
   const [budget, setBudget]       = useState(100);
   const [guests, setGuests]       = useState(2);
   const [tip, setTip]             = useState(true);
@@ -649,7 +651,7 @@ const Budget = ({ setPage }) => {
           {/* Row 1: Budget + Guests */}
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:18, marginBottom:22 }}>
             <div>
-              <label style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#c8973a", letterSpacing:"0.16em", textTransform:"uppercase", display:"block", marginBottom:7 }}>Total Budget (USD)</label>
+              <label style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#c8973a", letterSpacing:"0.16em", textTransform:"uppercase", display:"block", marginBottom:7 }}>Total Budget ({currency})</label>
               <div style={{ position:"relative" }}>
                 <span style={{ position:"absolute", left:11, top:"50%", transform:"translateY(-50%)", color:"#888", fontSize:17 }}>$</span>
                 <input type="number" min={10} max={5000} value={budget}
