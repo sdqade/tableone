@@ -457,8 +457,8 @@ function calcBudgetResults(totalBudget, guests, includeTip, drinksBudget, cuisin
     const tipAmt     = foodTotal * 0.2;
     const grandTotal = foodTotal + tipAmt + drinksInNGN;
     const avgRating  = meal.length ? meal.reduce((s, i) => s + i.rating, 0) / meal.length : 0;
-    const canAfford  = grandTotal <= totalBudget;
-    const leftover   = totalBudget - grandTotal;
+    const canAfford  = grandTotal <= budgetInNGN;
+  const leftover   = budgetInNGN - grandTotal;
 
     // Normalise value score — rating quality relative to % of budget used
     const budgetUsed = grandTotal / totalBudget;
