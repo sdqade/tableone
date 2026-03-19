@@ -391,8 +391,11 @@ const restaurants = [
 
 
 // ── BUDGET LOGIC ──────────────────────────────────────────────────────────────
-function calcBudgetResults(totalBudget, guests, includeTip, drinksBudget, cuisineFilter) {
-  const foodOnlyBudget = totalBudget - drinksBudget;
+function calcBudgetResults(totalBudget, guests, includeTip, drinksBudget, cuisineFilter, currency) {
+  // Convert budget to NGN for calculations if user entered USD
+  const budgetInNGN = currency === "USD" ? totalBudget * NGN_PER_USD : totalBudget;
+  const drinksInNGN = currency === "USD" ? drinksBudget * NGN_PER_USD : drinksBudget;
+  const foodOnlyBudget = budgetInNGN - drinksInNGN;
   const foodBudget = includeTip ? foodOnlyBudget / 1.2 : foodOnlyBudget;
   const perPerson = foodBudget / guests;
 
@@ -452,7 +455,7 @@ function calcBudgetResults(totalBudget, guests, includeTip, drinksBudget, cuisin
 
     const foodTotal  = spent * guests;
     const tipAmt     = foodTotal * 0.2;
-    const grandTotal = foodTotal + tipAmt + drinksBudget;
+    const grandTotal = foodTotal + tipAmt + drinksInNGN;
     const avgRating  = meal.length ? meal.reduce((s, i) => s + i.rating, 0) / meal.length : 0;
     const canAfford  = grandTotal <= totalBudget;
     const leftover   = totalBudget - grandTotal;
@@ -463,7 +466,7 @@ function calcBudgetResults(totalBudget, guests, includeTip, drinksBudget, cuisin
       ? Math.min(10, (avgRating / 5) * (1 / budgetUsed) * 5)
       : 0;
 
-    return { r, meal, spent, foodTotal, tipAmt, drinksBudget, grandTotal, avgRating, canAfford, leftover, valueScore };
+    return { r, meal, spent, foodTotal, tipAmt, drinksBudget: drinksInNGN, grandTotal, avgRating, canAfford, leftover, valueScore };
   }).sort((a, b) => {
     if (a.canAfford !== b.canAfford) return a.canAfford ? -1 : 1;
 return b.valueScore - a.valueScore;
@@ -951,8 +954,8 @@ const Budget = ({ setPage, currency }) => {
   const cuisines = ["All", ...new Set(restaurants.map(r => r.cuisine))];
   const foodPortion = budget - drinks;
   const results = useMemo(
-    () => ran ? calcBudgetResults(budget, guests, tip, drinks, cuisine) : [],
-    [ran, budget, guests, tip, drinks, cuisine]
+    () => ran ? calcBudgetResults(budget, guests, tip, drinks, cuisine, currency) : [],
+    [ran, budget, guests, tip, drinks, cuisine, currency]
   );
   const yes = results.filter(r => r.canAfford);
   const no  = results.filter(r => !r.canAfford);
