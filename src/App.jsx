@@ -1,4 +1,10 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  "https://cpotnzxzkuetxbwastda.supabase.co",
+  "sb_publishable_NDmvU000k0LA6k-4HaN1PA_q801OnOe"
+);
 //--test
 
 import { Analytics } from "@vercel/analytics/next"
@@ -564,49 +570,93 @@ function useFavorites() {
 function useRatings() {
   const [ratings, setRatings] = useState({});
   const [myVotes, setMyVotes] = useState(new Set());
-  const [loaded, setLoaded] = useState(false);
 
+  // Load all ratings from Supabase on mount
   useEffect(() => {
     (async () => {
       try {
-        const res = await window.storage.get("datedayz:ratings", true);
-        if (res?.value) setRatings(JSON.parse(res.value));
+        const { data } = await supabase
+          .from("dish_ratings")
+          .select("dish_key, total_stars, count");
+        if (data) {
+          const map = {};
+          data.forEach(row => {
+            map[row.dish_key] = { total: row.total_stars, count: row.count };
+          });
+          setRatings(map);
+        }
       } catch (_) {}
-      try {
-        const v = localStorage.getItem("datedayz:myvotes");
-        if (v) setMyVotes(new Set(JSON.parse(v)));
-      } catch (_) {}
-      setLoaded(true);
     })();
+
+    // Load my votes from localStorage
+    try {
+      const v = localStorage.getItem("datedayz:myvotes");
+      if (v) setMyVotes(new Set(JSON.parse(v)));
+    } catch (_) {}
   }, []);
 
   const rate = useCallback(async (dishKey, stars, seedRating, seedCount) => {
     if (myVotes.has(dishKey)) return;
+
+    // Optimistically update UI immediately
     setRatings(prev => {
       const existing = prev[dishKey] || { total: seedRating * seedCount, count: seedCount };
-      const next = {
-        total: existing.total + stars,
-        count: existing.count + 1,
+      return {
+        ...prev,
+        [dishKey]: { total: existing.total + stars, count: existing.count + 1 }
       };
-      const updated = { ...prev, [dishKey]: next };
-      window.storage.set("datedayz:ratings", JSON.stringify(updated), true).catch(() => {});
-      return updated;
     });
+
+    // Save vote locally so user can't vote twice
     setMyVotes(prev => {
       const next = new Set(prev);
       next.add(dishKey);
       localStorage.setItem("datedayz:myvotes", JSON.stringify([...next]));
       return next;
     });
+
+    // Upsert to Supabase
+    try {
+      const { data: existing } = await supabase
+        .from("dish_ratings")
+        .select("total_stars, count")
+        .eq("dish_key", dishKey)
+        .single();
+
+      if (existing) {
+        await supabase
+          .from("dish_ratings")
+          .update({
+            total_stars: existing.total_stars + stars,
+            count: existing.count + 1,
+            updated_at: new Date().toISOString()
+          })
+          .eq("dish_key", dishKey);
+      } else {
+        const seedTotal = seedRating * seedCount;
+        await supabase
+          .from("dish_ratings")
+          .insert({
+            dish_key: dishKey,
+            total_stars: seedTotal + stars,
+            count: seedCount + 1
+          });
+      }
+    } catch (err) {
+      console.error("Rating save failed:", err);
+    }
   }, [myVotes]);
 
   const getRating = useCallback((dishKey, seedRating, seedCount = 12) => {
     const r = ratings[dishKey];
     if (!r) return { avg: seedRating, count: seedCount };
-    return { avg: Math.round((r.total / r.count) * 10) / 10, count: r.count };
+    return {
+      avg: Math.round((r.total / r.count) * 10) / 10,
+      count: r.count
+    };
   }, [ratings]);
 
-  return { rate, getRating, myVotes, loaded };
+  return { rate, getRating, myVotes };
 }
 
 const DishRating = ({ dishKey, seedRating, seedCount = 12, rate, getRating, myVotes }) => {
