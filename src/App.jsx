@@ -1,5 +1,8 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 //--test
+
+import { Analytics } from "@vercel/analytics/next"
+
 // ── DATA ──────────────────────────────────────────────────────────────────────
 const restaurants = [
 {
