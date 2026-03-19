@@ -575,28 +575,28 @@ const HeartBtn = ({ id, favs, toggle, size = 20 }) => {
 
 // ── NAV ───────────────────────────────────────────────────────────────────────
 const Nav = ({ view, setPage, favCount, currency, setCurrency }) => (
-  <nav style={{ position:"sticky", top:0, zIndex:200, background:"rgba(14,12,9,.95)", backdropFilter:"blur(14px)", borderBottom:"1px solid #221f1a", display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 20px", height:58 }}>
-    <button onClick={() => setPage("home")} style={{ display:"flex", alignItems:"center", gap:9 }}>
-      <img src="/datedayznavlogo.svg" alt="DateDayz" style={{ height:32, width:"auto" }} />
+  <nav style={{ position:"sticky", top:0, zIndex:200, background:"rgba(14,12,9,.95)", backdropFilter:"blur(14px)", borderBottom:"1px solid #221f1a", display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 12px", height:52, gap:8, overflowX:"hidden" }}>
+<button onClick={() => setPage("home")} style={{ display:"flex", alignItems:"center", flexShrink:0 }}>
+      <img src="/datedayznavlogo.svg" alt="DateDayz" style={{ height:22, width:"auto" }} />
     </button>
-    <div style={{ display:"flex", gap:2, alignItems:"center" }}>
-      {[["home","Discover"],["map","🗺 Map"],["budget","💰 Budget"],["favorites","♥ Saved"]].map(([k,l]) => (
+    <div style={{ display:"flex", gap:0, alignItems:"center", overflowX:"auto", flexShrink:1 }}>
+      {[["home","Discover"],["map","Map"],["budget","Budget"],["favorites","♥"]].map(([k,l]) => (
         <button key={k} onClick={() => setPage(k)}
-          style={{ fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.08em", padding:"6px 10px", textTransform:"uppercase", position:"relative",
+          style={{ fontFamily:"'DM Mono',monospace", fontSize:9, letterSpacing:"0.05em", padding:"6px 7px", textTransform:"uppercase", position:"relative", whiteSpace:"nowrap",
             color: view===k ? "#c8973a" : k==="favorites" && favCount>0 ? "#e05252" : "#666",
             borderBottom:`2px solid ${view===k?"#c8973a":"transparent"}`,
             transition:"all .2s" }}>
           {l}
           {k==="favorites" && favCount>0 && (
-            <span style={{ position:"absolute", top:2, right:2, background:"#e05252", color:"#fff", borderRadius:"50%", width:14, height:14, fontSize:8, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'DM Mono',monospace" }}>
+            <span style={{ position:"absolute", top:2, right:0, background:"#e05252", color:"#fff", borderRadius:"50%", width:12, height:12, fontSize:7, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'DM Mono',monospace" }}>
               {favCount}
             </span>
           )}
         </button>
       ))}
-    <button onClick={() => setCurrency(c => c === "NGN" ? "USD" : "NGN")}
-        style={{ fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.08em", padding:"5px 10px", borderRadius:6, border:"1px solid #3a3228", background:"#1a1710", color:"#c8973a", marginLeft:4, transition:"all .2s" }}>
-        {currency === "NGN" ? "₦ NGN" : "$ USD"}
+      <button onClick={() => setCurrency(c => c === "NGN" ? "USD" : "NGN")}
+        style={{ fontFamily:"'DM Mono',monospace", fontSize:9, letterSpacing:"0.05em", padding:"4px 8px", borderRadius:5, border:"1px solid #3a3228", background:"#1a1710", color:"#c8973a", marginLeft:3, transition:"all .2s", whiteSpace:"nowrap", flexShrink:0 }}>
+        {currency === "NGN" ? "₦" : "$"}
       </button>
     </div>
   </nav>
