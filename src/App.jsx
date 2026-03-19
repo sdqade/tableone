@@ -1127,7 +1127,7 @@ const Budget = ({ setPage, currency }) => {
 
 const ResultCard = ({ res, rank, color, setPage, guests, dim, currency }) => {
   const { fmt } = usePrice(currency || "NGN");
-  const [open, setOpen] = useState(rank===1);
+  const [open, setOpen] = useState(rank === 1);
   const { r, meal, foodTotal, tipAmt, drinksBudget, grandTotal, avgRating, canAfford, leftover, valueScore } = res;
 
   return (
@@ -1143,7 +1143,7 @@ const ResultCard = ({ res, rank, color, setPage, guests, dim, currency }) => {
               <h3 style={{ fontFamily:"'Playfair Display',serif", fontSize:19, fontWeight:700, color:"#f0e8d8" }}>{r.name}</h3>
             </div>
             <div style={{ textAlign:"right" }}>
-              <div style={{ fontFamily:"'Playfair Display',serif", fontSize:28, fontWeight:900, color:canAfford?color:"#e05252", lineHeight:1 }}>${grandTotal.toFixed(0)}</div>
+              <div style={{ fontFamily:"'Playfair Display',serif", fontSize:28, fontWeight:900, color:canAfford?color:"#e05252", lineHeight:1 }}>{fmt(grandTotal)}</div>
               <p style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color:"#555", letterSpacing:"0.07em" }}>TOTAL</p>
             </div>
           </div>
@@ -1153,9 +1153,9 @@ const ResultCard = ({ res, rank, color, setPage, guests, dim, currency }) => {
             {[
               ["PER PERSON", fmt(grandTotal/guests)],
               ["FOOD", fmt(foodTotal)],
-              ["TIP", `$${tipAmt.toFixed(0)}`],
-              drinksBudget>0?["🍷 DRINKS",fmt(drinksBudget),"#5b8dd9"]:null,
-              canAfford?["LEFT OVER",fmt(leftover), color]:null,
+              ["TIP", fmt(tipAmt)],
+              drinksBudget>0 ? ["🍷 DRINKS", fmt(drinksBudget), "#5b8dd9"] : null,
+              canAfford ? ["LEFT OVER", fmt(leftover), color] : null,
             ].filter(Boolean).map(([k,v,c]) => (
               <div key={k} style={{ background:c?c+"12":"#1a1710", border:c&&c!==color?`1px solid ${c}28`:"none", borderRadius:6, padding:"5px 10px" }}>
                 <p style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color:"#555", marginBottom:1 }}>{k}</p>
@@ -1164,7 +1164,7 @@ const ResultCard = ({ res, rank, color, setPage, guests, dim, currency }) => {
             ))}
             <div style={{ background:"#1a1710", borderRadius:6, padding:"5px 10px" }}>
               <p style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color:"#555", marginBottom:1 }}>AVG RATING</p>
-              <Stars rating={avgRating} size={11} />
+              <Stars rating={avgRating||0} size={11} />
             </div>
           </div>
 
@@ -1172,10 +1172,10 @@ const ResultCard = ({ res, rank, color, setPage, guests, dim, currency }) => {
             <div style={{ marginTop:11 }}>
               <div style={{ display:"flex", justifyContent:"space-between", marginBottom:3 }}>
                 <span style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color:"#555", letterSpacing:"0.1em" }}>VALUE SCORE</span>
-                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color }}>{valueScore.toFixed(1)}/10</span>
+                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color }}>{(valueScore||0).toFixed(1)}/10</span>
               </div>
               <div style={{ height:3, background:"#1a1710", borderRadius:2, overflow:"hidden" }}>
-                <div style={{ height:"100%", width:`${Math.min(100,valueScore*10)}%`, background:`linear-gradient(90deg,${color}55,${color})`, borderRadius:2, transition:"width .7s ease" }}/>
+                <div style={{ height:"100%", width:`${Math.min(100,(valueScore||0)*10)}%`, background:`linear-gradient(90deg,${color}55,${color})`, borderRadius:2, transition:"width .7s ease" }}/>
               </div>
             </div>
           )}
@@ -1216,16 +1216,16 @@ const ResultCard = ({ res, rank, color, setPage, guests, dim, currency }) => {
                   <div style={{ background:color+"0a", border:`1px solid ${color}1a`, borderRadius:8, padding:"12px 14px", marginBottom:12 }}>
                     <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(110px,1fr))", gap:10 }}>
                       {[
-                        ["Food /person", `$${(foodTotal/guests).toFixed(2)}`],
-                        [`Food ×${guests}`, `$${foodTotal.toFixed(2)}`],
-                        ["Tip (20%)", `$${tipAmt.toFixed(2)}`],
-                        ...(drinksBudget>0?[["🍷 Drinks",`$${drinksBudget.toFixed(2)}`]]: []),
-                        ["Grand Total", `$${grandTotal.toFixed(2)}`],
-                        ...(canAfford?[["Your Budget",`$${(grandTotal+leftover).toFixed(0)}`]]: []),
+                        ["Food /person", fmt(foodTotal/guests)],
+                        [`Food ×${guests}`, fmt(foodTotal)],
+                        ["Tip (20%)", fmt(tipAmt)],
+                        ...(drinksBudget>0?[["🍷 Drinks", fmt(drinksBudget)]]: []),
+                        ["Grand Total", fmt(grandTotal)],
+                        ...(canAfford?[["Your Budget", fmt(grandTotal+leftover)]]: []),
                       ].map(([k,v]) => (
                         <div key={k}>
                           <p style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color:"#555", marginBottom:2 }}>{k.toUpperCase()}</p>
-                          <p style={{ fontFamily:"'DM Mono',monospace", fontSize:14, color: k==="Grand Total"?color:k.includes("Budget")?"#4ade80":"#e8e0d0" }}>{v}</p>
+                          <p style={{ fontFamily:"'DM Mono',monospace", fontSize:14, color:k==="Grand Total"?color:k.includes("Budget")?"#4ade80":"#e8e0d0" }}>{v}</p>
                         </div>
                       ))}
                     </div>
