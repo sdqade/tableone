@@ -557,6 +557,98 @@ function useFavorites() {
   return { favs, toggle, loaded };
 }
 
+// ── DISH RATINGS ─────────────────────────────────────────────────────────────
+function useRatings() {
+  const [ratings, setRatings] = useState({});
+  const [myVotes, setMyVotes] = useState(new Set());
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await window.storage.get("datedayz:ratings", true);
+        if (res?.value) setRatings(JSON.parse(res.value));
+      } catch (_) {}
+      try {
+        const v = localStorage.getItem("datedayz:myvotes");
+        if (v) setMyVotes(new Set(JSON.parse(v)));
+      } catch (_) {}
+      setLoaded(true);
+    })();
+  }, []);
+
+  const rate = useCallback(async (dishKey, stars, seedRating, seedCount) => {
+    if (myVotes.has(dishKey)) return;
+    setRatings(prev => {
+      const existing = prev[dishKey] || { total: seedRating * seedCount, count: seedCount };
+      const next = {
+        total: existing.total + stars,
+        count: existing.count + 1,
+      };
+      const updated = { ...prev, [dishKey]: next };
+      window.storage.set("datedayz:ratings", JSON.stringify(updated), true).catch(() => {});
+      return updated;
+    });
+    setMyVotes(prev => {
+      const next = new Set(prev);
+      next.add(dishKey);
+      localStorage.setItem("datedayz:myvotes", JSON.stringify([...next]));
+      return next;
+    });
+  }, [myVotes]);
+
+  const getRating = useCallback((dishKey, seedRating, seedCount = 12) => {
+    const r = ratings[dishKey];
+    if (!r) return { avg: seedRating, count: seedCount };
+    return { avg: Math.round((r.total / r.count) * 10) / 10, count: r.count };
+  }, [ratings]);
+
+  return { rate, getRating, myVotes, loaded };
+}
+
+const DishRating = ({ dishKey, seedRating, seedCount = 12, rate, getRating, myVotes }) => {
+  const [hover, setHover] = useState(0);
+  const { avg, count } = getRating(dishKey, seedRating, seedCount);
+  const voted = myVotes.has(dishKey);
+
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
+      {/* Current average */}
+      <div style={{ display:"inline-flex", alignItems:"center", gap:2 }}>
+        {[1,2,3,4,5].map(i => {
+          const full = Math.floor(avg);
+          const half = avg % 1 >= 0.5;
+          return (
+            <span key={i} style={{ fontSize:11, color:(i<=full||(i===full+1&&half))?"#f4c842":"#333", lineHeight:1 }}>
+              {i<=full?"★":i===full+1&&half?"⯨":"☆"}
+            </span>
+          );
+        })}
+        <span style={{ fontSize:10, color:"#888", marginLeft:3 }}>{avg.toFixed(1)}</span>
+        <span style={{ fontSize:9, color:"#555", marginLeft:2 }}>· {count} ratings</span>
+      </div>
+
+      {/* Rate button */}
+      {!voted ? (
+        <div style={{ display:"inline-flex", alignItems:"center", gap:1 }}
+          onMouseLeave={() => setHover(0)}>
+          <span style={{ fontSize:9, color:"#666", fontFamily:"'DM Mono',monospace", letterSpacing:"0.06em", marginRight:3 }}>RATE:</span>
+          {[1,2,3,4,5].map(star => (
+            <button key={star}
+              onMouseEnter={() => setHover(star)}
+              onClick={() => rate(dishKey, star, seedRating, seedCount)}
+              style={{ fontSize:14, lineHeight:1, color: star <= (hover||0) ? "#f4c842" : "#333", background:"none", border:"none", cursor:"pointer", padding:"0 1px", transition:"color .1s" }}>
+              ★
+            </button>
+          ))}
+        </div>
+      ) : (
+        <span style={{ fontSize:9, color:"#4ade80", fontFamily:"'DM Mono',monospace", letterSpacing:"0.06em" }}>✓ RATED</span>
+      )}
+    </div>
+  );
+};
+
 // ── HEART BUTTON ──────────────────────────────────────────────────────────────
 const HeartBtn = ({ id, favs, toggle, size = 20 }) => {
   const [pop, setPop] = useState(false);
@@ -1247,7 +1339,7 @@ const ResultCard = ({ res, rank, color, setPage, guests, dim, currency }) => {
 };
 
 // ── RESTAURANT PAGE ───────────────────────────────────────────────────────────
-const Restaurant = ({ id, setPage, favs, toggleFav, currency }) => {
+const Restaurant = ({ id, setPage, favs, toggleFav, currency, rate, getRating, myVotes }) => {
   const { fmt } = usePrice(currency);
   const r = restaurants.find(x => x.id===id);
   const [tab, setTab] = useState("menu");
@@ -1320,7 +1412,13 @@ const Restaurant = ({ id, setPage, favs, toggleFav, currency }) => {
                         {item.tags.map(t => <Chip key={t} label={t} accent={r.accentColor} />)}
                       </div>
                       <p style={{ color:"#666", fontSize:12.5, lineHeight:1.5, marginBottom:5 }}>{item.desc}</p>
-                      <Stars rating={item.rating} size={11} />
+                      <DishRating
+                        dishKey={`${id}:${item.name}`}
+                        seedRating={item.rating}
+                        rate={rate}
+                        getRating={getRating}
+                        myVotes={myVotes}
+                      />
                     </div>
                     <p style={{ fontFamily:"'DM Mono',monospace", fontSize:14, color:r.accentColor, flexShrink:0 }}>{fmt(item.price)}</p>
                   </div>
@@ -1398,6 +1496,7 @@ export default function App() {
   const [page, setPage] = useState("home");
   const [currency, setCurrency] = useState("NGN");
   const { favs, toggle: toggleFav, loaded } = useFavorites();
+  const { rate, getRating, myVotes } = useRatings();
   const view = typeof page==="string" ? page : page.view;
 
   if (!loaded) return (
@@ -1418,7 +1517,7 @@ export default function App() {
       {view==="map"        && <MapView    setPage={setPage} favs={favs} toggleFav={toggleFav} />}
       {view==="budget"     && <Budget     setPage={setPage} currency={currency} />}
       {view==="favorites"  && <Favorites  setPage={setPage} favs={favs} toggleFav={toggleFav} currency={currency} />}
-      {view==="restaurant" && <Restaurant id={page.id} setPage={setPage} favs={favs} toggleFav={toggleFav} currency={currency} />}
+      {view==="restaurant" && <Restaurant id={page.id} setPage={setPage} favs={favs} toggleFav={toggleFav} currency={currency} rate={rate} getRating={getRating} myVotes={myVotes} />}
       <footer style={{ borderTop:"1px solid #1e1c18", padding:"22px", textAlign:"center" }}>
         <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#333", letterSpacing:"0.12em" }}>
           DateDayz · EVERY DISH, RATED · {new Date().getFullYear()}
