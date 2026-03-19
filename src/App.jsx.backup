@@ -1105,7 +1105,7 @@ const Budget = ({ setPage, currency }) => {
                   {yes.length} restaurant{yes.length>1?"s":""} within budget — ranked by value
                 </span>
               </div>
-              {yes.map((res, i) => <ResultCard key={res.r.id} res={res} rank={i+1} color={rankColors[i]||"#aaa"} setPage={setPage} guests={guests} currency={currency} />)}
+              {yes.map((res, i) => <ResultCard key={res.r.id} res={res} rank={i+1} color={rankColors[i]||"#aaa"} setPage={setPage} guests={guests} />)}
             </>
           )}
 
@@ -1116,7 +1116,7 @@ const Budget = ({ setPage, currency }) => {
                   ↑ just over budget — worth the stretch?
                 </span>
               </div>
-              {no.slice(0,2).map(res => <ResultCard key={res.r.id} res={res} rank={null} color="#555" setPage={setPage} guests={guests} currency={currency} dim />)}
+              {no.slice(0,2).map(res => <ResultCard key={res.r.id} res={res} rank={null} color="#555" setPage={setPage} guests={guests} dim />)}
             </>
           )}
         </div>
@@ -1125,8 +1125,7 @@ const Budget = ({ setPage, currency }) => {
   );
 };
 
-const ResultCard = ({ res, rank, color, setPage, guests, dim, currency }) => {
-  const { fmt } = usePrice(currency || "NGN");
+const ResultCard = ({ res, rank, color, setPage, guests, dim }) => {
   const [open, setOpen] = useState(rank===1);
   const { r, meal, foodTotal, tipAmt, drinksBudget, grandTotal, avgRating, canAfford, leftover, valueScore } = res;
 
@@ -1151,11 +1150,11 @@ const ResultCard = ({ res, rank, color, setPage, guests, dim, currency }) => {
           {/* Stats grid */}
           <div style={{ display:"flex", gap:7, flexWrap:"wrap", marginTop:10 }}>
             {[
-              ["PER PERSON", fmt(grandTotal/guests)],
-              ["FOOD", fmt(foodTotal)],
+              ["PER PERSON", `$${(grandTotal/guests).toFixed(0)}`],
+              ["FOOD", `$${foodTotal.toFixed(0)}`],
               ["TIP", `$${tipAmt.toFixed(0)}`],
-              drinksBudget>0?["🍷 DRINKS",fmt(drinksBudget),"#5b8dd9"]:null,
-              canAfford?["LEFT OVER",fmt(leftover), color]:null,
+              drinksBudget>0?["🍷 DRINKS",`$${drinksBudget.toFixed(0)}`,"#5b8dd9"]:null,
+              canAfford?["LEFT OVER",`$${leftover.toFixed(0)}`,color]:null,
             ].filter(Boolean).map(([k,v,c]) => (
               <div key={k} style={{ background:c?c+"12":"#1a1710", border:c&&c!==color?`1px solid ${c}28`:"none", borderRadius:6, padding:"5px 10px" }}>
                 <p style={{ fontFamily:"'DM Mono',monospace", fontSize:8.5, color:"#555", marginBottom:1 }}>{k}</p>
