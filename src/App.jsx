@@ -7,7 +7,7 @@ const supabase = createClient(
 );
 //--test
 
-import { Analytics } from "@vercel/analytics/next"
+
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
 const restaurants = [
