@@ -568,7 +568,294 @@ function useFavorites() {
   return { favs, toggle, loaded };
 }
 
-// ── DISH RATINGS ─────────────────────────────────────────────────────────────
+// ── DISH REVIEWS & RATINGS ────────────────────────────────────────────────────
+function useReviews() {
+  const [reviews, setReviews] = useState({});
+  const [myReviews, setMyReviews] = useState(new Set());
+  const [submitting, setSubmitting] = useState(false);
+
+  const loadReviews = useCallback(async (dishKey) => {
+    try {
+      const { data } = await supabase
+        .from("dish_reviews")
+        .select("*")
+        .eq("dish_key", dishKey)
+        .order("created_at", { ascending: false });
+      if (data) {
+        setReviews(prev => ({ ...prev, [dishKey]: data }));
+      }
+    } catch (_) {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem("datedayz:myreviews");
+      if (v) setMyReviews(new Set(JSON.parse(v)));
+    } catch (_) {}
+  }, []);
+
+  const submitReview = useCallback(async ({ dishKey, restaurantId, dishName, stars, reviewText, reviewerName, photoFile }) => {
+    setSubmitting(true);
+    try {
+      let photoUrl = null;
+
+      // Upload photo if provided
+      if (photoFile) {
+        const ext = photoFile.name.split(".").pop();
+        const fileName = `${dishKey}-${Date.now()}.${ext}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("dish-photos")
+          .upload(fileName, photoFile, { contentType: photoFile.type });
+        if (!uploadError && uploadData) {
+          const { data: urlData } = supabase.storage
+            .from("dish-photos")
+            .getPublicUrl(fileName);
+          photoUrl = urlData.publicUrl;
+        }
+      }
+
+      // Insert review
+      const { data, error } = await supabase
+        .from("dish_reviews")
+        .insert({
+          dish_key: dishKey,
+          restaurant_id: restaurantId,
+          dish_name: dishName,
+          stars,
+          review_text: reviewText || null,
+          reviewer_name: reviewerName || null,
+          photo_url: photoUrl,
+        })
+        .select()
+        .single();
+
+      if (!error && data) {
+        setReviews(prev => ({
+          ...prev,
+          [dishKey]: [data, ...(prev[dishKey] || [])]
+        }));
+        setMyReviews(prev => {
+          const next = new Set(prev);
+          next.add(dishKey);
+          localStorage.setItem("datedayz:myreviews", JSON.stringify([...next]));
+          return next;
+        });
+      }
+    } catch (err) {
+      console.error("Review submit failed:", err);
+    }
+    setSubmitting(false);
+  }, []);
+
+  const getAggregatedRating = useCallback((dishKey, seedRating, seedCount = 12) => {
+    const dishReviews = reviews[dishKey];
+    if (!dishReviews || dishReviews.length === 0) {
+      return { avg: seedRating, count: seedCount };
+    }
+    const totalSeedStars = seedRating * seedCount;
+    const reviewStars = dishReviews.reduce((s, r) => s + r.stars, 0);
+    const totalCount = seedCount + dishReviews.length;
+    const avg = Math.round(((totalSeedStars + reviewStars) / totalCount) * 10) / 10;
+    return { avg, count: totalCount };
+  }, [reviews]);
+
+  return { reviews, loadReviews, submitReview, myReviews, submitting, getAggregatedRating };
+}
+
+// ── REVIEW FORM & DISPLAY ─────────────────────────────────────────────────────
+const DishReviewSection = ({ dishKey, restaurantId, dishName, seedRating, seedCount = 12, reviews, loadReviews, submitReview, myReviews, submitting, getAggregatedRating, accentColor }) => {
+  const [open, setOpen] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [stars, setStars] = useState(0);
+  const [hoverStar, setHoverStar] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [reviewerName, setReviewerName] = useState("");
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const hasReviewed = myReviews.has(dishKey);
+  const { avg, count } = getAggregatedRating(dishKey, seedRating, seedCount);
+  const dishReviews = reviews[dishKey] || [];
+
+  const handleOpen = () => {
+    setOpen(true);
+    loadReviews(dishKey);
+  };
+
+  const handlePhoto = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setPhotoFile(file);
+    const reader = new FileReader();
+    reader.onload = (ev) => setPhotoPreview(ev.target.result);
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async () => {
+    if (stars === 0) return;
+    await submitReview({ dishKey, restaurantId, dishName, stars, reviewText, reviewerName, photoFile });
+    setShowForm(false);
+    setStars(0);
+    setReviewText("");
+    setReviewerName("");
+    setPhotoFile(null);
+    setPhotoPreview(null);
+  };
+
+  return (
+    <div style={{ marginTop:6 }}>
+      {/* Rating summary row */}
+      <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
+        <div style={{ display:"inline-flex", alignItems:"center", gap:2 }}>
+          {[1,2,3,4,5].map(i => {
+            const full = Math.floor(avg);
+            const half = avg % 1 >= 0.5;
+            return (
+              <span key={i} style={{ fontSize:11, color:(i<=full||(i===full+1&&half))?"#f4c842":"#333", lineHeight:1 }}>
+                {i<=full?"★":i===full+1&&half?"⯨":"☆"}
+              </span>
+            );
+          })}
+          <span style={{ fontSize:10, color:"#888", marginLeft:3 }}>{avg.toFixed(1)}</span>
+        </div>
+        <button onClick={handleOpen}
+          style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:"#666", letterSpacing:"0.06em", background:"#1a1710", border:"1px solid #2a2520", borderRadius:4, padding:"2px 8px", cursor:"pointer" }}>
+          {count} REVIEWS
+        </button>
+        {!hasReviewed && (
+          <button onClick={() => { handleOpen(); setShowForm(true); }}
+            style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:accentColor, letterSpacing:"0.06em", background:accentColor+"15", border:`1px solid ${accentColor}44`, borderRadius:4, padding:"2px 8px", cursor:"pointer" }}>
+            + RATE & REVIEW
+          </button>
+        )}
+        {hasReviewed && (
+          <span style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:"#4ade80", letterSpacing:"0.06em" }}>✓ REVIEWED</span>
+        )}
+      </div>
+
+      {/* Expanded reviews panel */}
+      {open && (
+        <div className="fi" style={{ marginTop:10, background:"#111009", border:"1px solid #2a2520", borderRadius:10, padding:"16px", display:"flex", flexDirection:"column", gap:12 }}>
+
+          {/* Review form */}
+          {showForm && !hasReviewed && (
+            <div style={{ background:"#1a1710", borderRadius:8, padding:"14px", border:`1px solid ${accentColor}30` }}>
+              <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:accentColor, letterSpacing:"0.12em", textTransform:"uppercase", marginBottom:12 }}>Your Review</p>
+
+              {/* Star selector */}
+              <div style={{ display:"flex", alignItems:"center", gap:4, marginBottom:12 }}>
+                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:"#666", marginRight:4 }}>RATING:</span>
+                {[1,2,3,4,5].map(s => (
+                  <button key={s}
+                    onMouseEnter={() => setHoverStar(s)}
+                    onMouseLeave={() => setHoverStar(0)}
+                    onClick={() => setStars(s)}
+                    style={{ fontSize:22, color: s<=(hoverStar||stars)?"#f4c842":"#333", background:"none", border:"none", cursor:"pointer", padding:"0 2px", transition:"color .1s" }}>
+                    ★
+                  </button>
+                ))}
+                {stars > 0 && <span style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#888", marginLeft:4 }}>{["","Poor","Fair","Good","Great","Excellent"][stars]}</span>}
+              </div>
+
+              {/* Name input */}
+              <input
+                placeholder="Your name (optional)"
+                value={reviewerName}
+                onChange={e => setReviewerName(e.target.value)}
+                style={{ width:"100%", padding:"9px 12px", background:"#0e0c09", border:"1px solid #2a2520", borderRadius:6, color:"#e8e0d0", fontSize:13, outline:"none", marginBottom:8, fontFamily:"'DM Sans',sans-serif" }}
+              />
+
+              {/* Review text */}
+              <textarea
+                placeholder="How was this dish? (optional)"
+                value={reviewText}
+                onChange={e => setReviewText(e.target.value)}
+                rows={3}
+                style={{ width:"100%", padding:"9px 12px", background:"#0e0c09", border:"1px solid #2a2520", borderRadius:6, color:"#e8e0d0", fontSize:13, outline:"none", resize:"none", marginBottom:8, fontFamily:"'DM Sans',sans-serif" }}
+              />
+
+              {/* Photo upload */}
+              <div style={{ marginBottom:12 }}>
+                <label style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:"#666", letterSpacing:"0.1em", display:"block", marginBottom:6 }}>ADD A PHOTO (optional)</label>
+                {photoPreview ? (
+                  <div style={{ position:"relative", display:"inline-block" }}>
+                    <img src={photoPreview} alt="preview" style={{ width:80, height:80, objectFit:"cover", borderRadius:6, border:`1px solid ${accentColor}44` }}/>
+                    <button onClick={() => { setPhotoFile(null); setPhotoPreview(null); }}
+                      style={{ position:"absolute", top:-6, right:-6, background:"#e05252", color:"#fff", border:"none", borderRadius:"50%", width:18, height:18, fontSize:10, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <label style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"8px 14px", background:"#0e0c09", border:"1px dashed #3a3228", borderRadius:6, cursor:"pointer", fontFamily:"'DM Mono',monospace", fontSize:10, color:"#666" }}>
+                    📷 Upload photo
+                    <input type="file" accept="image/*" onChange={handlePhoto} style={{ display:"none" }}/>
+                  </label>
+                )}
+              </div>
+
+              {/* Submit */}
+              <div style={{ display:"flex", gap:8 }}>
+                <button onClick={handleSubmit} disabled={stars===0||submitting}
+                  style={{ flex:1, padding:"10px", borderRadius:7, background: stars===0?"#2a2520":accentColor, color: stars===0?"#555":"#0e0c09", fontFamily:"'DM Mono',monospace", fontSize:11, letterSpacing:"0.07em", cursor: stars===0?"not-allowed":"pointer", transition:"all .2s" }}>
+                  {submitting ? "SUBMITTING..." : "SUBMIT REVIEW"}
+                </button>
+                <button onClick={() => setShowForm(false)}
+                  style={{ padding:"10px 16px", borderRadius:7, background:"#1e1c18", border:"1px solid #3a3228", color:"#888", fontFamily:"'DM Mono',monospace", fontSize:11, cursor:"pointer" }}>
+                  CANCEL
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Show form button if not open */}
+          {!showForm && !hasReviewed && (
+            <button onClick={() => setShowForm(true)}
+              style={{ padding:"10px", borderRadius:7, background:accentColor+"18", border:`1px solid ${accentColor}44`, color:accentColor, fontFamily:"'DM Mono',monospace", fontSize:10, letterSpacing:"0.08em", cursor:"pointer" }}>
+              + WRITE A REVIEW
+            </button>
+          )}
+
+          {/* Reviews list */}
+          {dishReviews.length === 0 ? (
+            <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#555", textAlign:"center", padding:"12px 0" }}>No reviews yet — be the first!</p>
+          ) : (
+            dishReviews.map(rev => (
+              <div key={rev.id} style={{ borderTop:"1px solid #1e1c18", paddingTop:12, display:"flex", gap:10 }}>
+                {rev.photo_url && (
+                  <img src={rev.photo_url} alt="dish" style={{ width:64, height:64, objectFit:"cover", borderRadius:7, flexShrink:0, border:"1px solid #2a2520" }}/>
+                )}
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:4 }}>
+                    <div>
+                      <span style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#e8e0d0" }}>
+                        {rev.reviewer_name || "Anonymous diner"}
+                      </span>
+                      <span style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:"#444", marginLeft:8 }}>
+                        {new Date(rev.created_at).toLocaleDateString("en-NG", { day:"numeric", month:"short", year:"numeric" })}
+                      </span>
+                    </div>
+                    <div style={{ display:"flex", gap:1 }}>
+                      {[1,2,3,4,5].map(i => (
+                        <span key={i} style={{ fontSize:11, color:i<=rev.stars?"#f4c842":"#333" }}>★</span>
+                      ))}
+                    </div>
+                  </div>
+                  {rev.review_text && (
+                    <p style={{ fontSize:12.5, color:"#999", lineHeight:1.5 }}>{rev.review_text}</p>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+
+          <button onClick={() => setOpen(false)}
+            style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:"#555", letterSpacing:"0.08em", background:"none", border:"none", cursor:"pointer", textAlign:"center" }}>
+            CLOSE ▲
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 function useRatings() {
   const [ratings, setRatings] = useState({});
   const [myVotes, setMyVotes] = useState(new Set());
@@ -1421,7 +1708,7 @@ const ResultCard = ({ res, rank, color, setPage, guests, dim, currency }) => {
 };
 
 // ── RESTAURANT PAGE ───────────────────────────────────────────────────────────
-const Restaurant = ({ id, setPage, favs, toggleFav, currency, rate, getRating, myVotes }) => {
+const Restaurant = ({ id, setPage, favs, toggleFav, currency, reviews, loadReviews, submitReview, myReviews, submitting, getAggregatedRating }) => {
   const { fmt } = usePrice(currency);
   const r = restaurants.find(x => x.id===id);
   const [tab, setTab] = useState("menu");
@@ -1494,12 +1781,18 @@ const Restaurant = ({ id, setPage, favs, toggleFav, currency, rate, getRating, m
                         {item.tags.map(t => <Chip key={t} label={t} accent={r.accentColor} />)}
                       </div>
                       <p style={{ color:"#666", fontSize:12.5, lineHeight:1.5, marginBottom:5 }}>{item.desc}</p>
-                      <DishRating
+                      <DishReviewSection
                         dishKey={`${id}:${item.name}`}
+                        restaurantId={id}
+                        dishName={item.name}
                         seedRating={item.rating}
-                        rate={rate}
-                        getRating={getRating}
-                        myVotes={myVotes}
+                        reviews={reviews}
+                        loadReviews={loadReviews}
+                        submitReview={submitReview}
+                        myReviews={myReviews}
+                        submitting={submitting}
+                        getAggregatedRating={getAggregatedRating}
+                        accentColor={r.accentColor}
                       />
                     </div>
                     <p style={{ fontFamily:"'DM Mono',monospace", fontSize:14, color:r.accentColor, flexShrink:0 }}>{fmt(item.price)}</p>
@@ -1586,7 +1879,7 @@ export default function App() {
   const [page, setPage] = useState("home");
   const [currency, setCurrency] = useState("NGN");
   const { favs, toggle: toggleFav, loaded } = useFavorites();
-  const { rate, getRating, myVotes } = useRatings();
+  const { reviews, loadReviews, submitReview, myReviews, submitting, getAggregatedRating } = useReviews();
   const view = typeof page==="string" ? page : page.view;
 
   if (!loaded) return (
@@ -1607,7 +1900,7 @@ export default function App() {
       {view==="map"        && <MapView    setPage={setPage} favs={favs} toggleFav={toggleFav} />}
       {view==="budget"     && <Budget     setPage={setPage} currency={currency} />}
       {view==="favorites"  && <Favorites  setPage={setPage} favs={favs} toggleFav={toggleFav} currency={currency} />}
-      {view==="restaurant" && <Restaurant id={page.id} setPage={setPage} favs={favs} toggleFav={toggleFav} currency={currency} rate={rate} getRating={getRating} myVotes={myVotes} />}
+      {view==="restaurant" && <Restaurant id={page.id} setPage={setPage} favs={favs} toggleFav={toggleFav} currency={currency} reviews={reviews} loadReviews={loadReviews} submitReview={submitReview} myReviews={myReviews} submitting={submitting} getAggregatedRating={getAggregatedRating} />}
       <footer style={{ borderTop:"1px solid #1e1c18", padding:"22px", textAlign:"center" }}>
         <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:"#333", letterSpacing:"0.12em" }}>
           DateDayz · EVERY DISH, RATED · {new Date().getFullYear()}
