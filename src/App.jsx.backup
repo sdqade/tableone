@@ -21,6 +21,7 @@ const restaurants = [
   highlights: ["Brunch 9am–2pm", "A La Carte from Noon", "Prime Cuts & Seafood", "Halal menu"],
   howToOrder: "Walk-ins welcome, reservations advised. Call ahead for groups. Brunch served 9am–2pm, A La Carte starts at 12 noon. Kitchen closes 9:30pm.",
   rsvp: { type: "phone", label: "Call to Reserve", value: "+2348164388047" },
+whatsapp: "+2348164388047",
   mapLink: "https://maps.app.goo.gl/gFQnVUx1DaexEKC17",
   appleMapsLink: "https://maps.app.goo.gl/gFQnVUx1DaexEKC17",
   overallRating: 4.6,
@@ -200,6 +201,7 @@ const restaurants = [
   highlights: ["Signature cocktails", "Live jazz & DJ nights", "Private dining", "Multicultural menu"],
   howToOrder: "Walk-ins welcome. Reservations recommended especially on weekends. Call or visit website to book.",
   rsvp: { type: "phone", label: "Call to Reserve", value: "+2349166414520" },
+whatsapp: "+2349166414520",
   mapLink: "https://maps.google.com/?q=The+Smiths+16+Akin+Adesola+Victoria+Island+Lagos",
   appleMapsLink: "https://maps.apple.com/?q=The+Smiths+Victoria+Island+Lagos",
   overallRating: 4.7,
@@ -1353,13 +1355,21 @@ const Restaurant = ({ id, setPage, favs, toggleFav, currency }) => {
           <div className="fi" style={{ paddingBottom:60 }}>
             <div style={{ background:"#141210", border:"1px solid #2a2520", borderRadius:11, padding:"24px", marginBottom:16 }}>
               <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:r.accentColor, letterSpacing:"0.14em", textTransform:"uppercase", marginBottom:14 }}>Reservations & RSVP</p>
-              {r.rsvp.value
-                ? <a href={r.rsvp.type==="phone"?`tel:${r.rsvp.value}`:r.rsvp.value} target={r.rsvp.type==="link"?"_blank":undefined} rel="noreferrer" className="bp"
-                    style={{ display:"inline-flex", alignItems:"center", gap:7, background:r.accentColor, color:"#0e0c09", padding:"12px 24px", borderRadius:7, fontFamily:"'DM Mono',monospace", fontSize:12, letterSpacing:"0.05em" }}>
-                    {r.rsvp.type==="phone"?"📞":"🔗"} {r.rsvp.label}
-                  </a>
-                : <p style={{ background:"#1a1710", borderRadius:7, padding:"14px 18px", color:"#aaa", fontSize:13 }}>🚶 {r.rsvp.label} — no advance booking needed.</p>
-              }
+              <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+                {r.rsvp.value
+                  ? <a href={r.rsvp.type==="phone"?`tel:${r.rsvp.value}`:r.rsvp.value} target={r.rsvp.type==="link"?"_blank":undefined} rel="noreferrer" className="bp"
+                      style={{ display:"inline-flex", alignItems:"center", gap:7, background:r.accentColor, color:"#0e0c09", padding:"12px 24px", borderRadius:7, fontFamily:"'DM Mono',monospace", fontSize:12, letterSpacing:"0.05em" }}>
+                      {r.rsvp.type==="phone"?"📞":"🔗"} {r.rsvp.label}
+                    </a>
+                  : <p style={{ background:"#1a1710", borderRadius:7, padding:"14px 18px", color:"#aaa", fontSize:13 }}>🚶 {r.rsvp.label} — no advance booking needed.</p>
+                }
+                <WhatsAppBtn phone={r.whatsapp} restaurantName={r.name} accentColor={r.accentColor} />
+                {r.whatsapp && (
+                  <p style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#555", letterSpacing:"0.06em" }}>
+                    VIA DATEDAYZ · MESSAGE OPENS WITH YOUR REFERRAL
+                  </p>
+                )}
+              </div>
             </div>
             <div style={{ background:"#141210", border:"1px solid #2a2520", borderRadius:11, overflow:"hidden" }}>
               <div style={{ height:200, background:`linear-gradient(135deg,#1a1710 0%,${r.accentColor}0e 100%)`, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:10, position:"relative" }}>

@@ -30,6 +30,7 @@ const restaurants = [
   highlights: ["Brunch 9am–2pm", "A La Carte from Noon", "Prime Cuts & Seafood", "Halal menu"],
   howToOrder: "Walk-ins welcome, reservations advised. Call ahead for groups. Brunch served 9am–2pm, A La Carte starts at 12 noon. Kitchen closes 9:30pm.",
   rsvp: { type: "phone", label: "Call to Reserve", value: "+2348164388047" },
+whatsapp: "+2348164388047",
   mapLink: "https://maps.app.goo.gl/gFQnVUx1DaexEKC17",
   appleMapsLink: "https://maps.app.goo.gl/gFQnVUx1DaexEKC17",
   overallRating: 4.6,
@@ -209,6 +210,7 @@ const restaurants = [
   highlights: ["Signature cocktails", "Live jazz & DJ nights", "Private dining", "Multicultural menu"],
   howToOrder: "Walk-ins welcome. Reservations recommended especially on weekends. Call or visit website to book.",
   rsvp: { type: "phone", label: "Call to Reserve", value: "+2349166414520" },
+whatsapp: "+2349166414520",
   mapLink: "https://maps.google.com/?q=The+Smiths+16+Akin+Adesola+Victoria+Island+Lagos",
   appleMapsLink: "https://maps.apple.com/?q=The+Smiths+Victoria+Island+Lagos",
   overallRating: 4.7,
@@ -718,6 +720,33 @@ const HeartBtn = ({ id, favs, toggle, size = 20 }) => {
       style={{ fontSize:size, lineHeight:1, color:isFav?"#e05252":"#444", background:"none", padding:4, borderRadius:"50%", flexShrink:0 }}>
       {isFav ? "♥" : "♡"}
     </button>
+  );
+};
+// ── WHATSAPP ──────────────────────────────────────────────────────────────────
+const WhatsAppBtn = ({ phone, restaurantName, accentColor }) => {
+  if (!phone) return null;
+
+  const clean = phone.replace(/\D/g, "");
+  const message = encodeURIComponent(
+    `Hi! I discovered ${restaurantName} on DateDayz (datedayz.com) and I'd love to make a reservation. Could you help me with availability? 😊`
+  );
+  const url = `https://wa.me/${clean}?text=${message}`;
+
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer"
+      className="bp"
+      style={{
+        display:"inline-flex", alignItems:"center", gap:8,
+        background:"#25D366", color:"#fff",
+        padding:"13px 24px", borderRadius:8,
+        fontFamily:"'DM Mono',monospace", fontSize:12, letterSpacing:"0.05em",
+        textDecoration:"none",
+      }}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      Reserve via WhatsApp
+    </a>
   );
 };
 
@@ -1508,13 +1537,21 @@ const Restaurant = ({ id, setPage, favs, toggleFav, currency, rate, getRating, m
           <div className="fi" style={{ paddingBottom:60 }}>
             <div style={{ background:"#141210", border:"1px solid #2a2520", borderRadius:11, padding:"24px", marginBottom:16 }}>
               <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:r.accentColor, letterSpacing:"0.14em", textTransform:"uppercase", marginBottom:14 }}>Reservations & RSVP</p>
-              {r.rsvp.value
-                ? <a href={r.rsvp.type==="phone"?`tel:${r.rsvp.value}`:r.rsvp.value} target={r.rsvp.type==="link"?"_blank":undefined} rel="noreferrer" className="bp"
-                    style={{ display:"inline-flex", alignItems:"center", gap:7, background:r.accentColor, color:"#0e0c09", padding:"12px 24px", borderRadius:7, fontFamily:"'DM Mono',monospace", fontSize:12, letterSpacing:"0.05em" }}>
-                    {r.rsvp.type==="phone"?"📞":"🔗"} {r.rsvp.label}
-                  </a>
-                : <p style={{ background:"#1a1710", borderRadius:7, padding:"14px 18px", color:"#aaa", fontSize:13 }}>🚶 {r.rsvp.label} — no advance booking needed.</p>
-              }
+              <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+                {r.rsvp.value
+                  ? <a href={r.rsvp.type==="phone"?`tel:${r.rsvp.value}`:r.rsvp.value} target={r.rsvp.type==="link"?"_blank":undefined} rel="noreferrer" className="bp"
+                      style={{ display:"inline-flex", alignItems:"center", gap:7, background:r.accentColor, color:"#0e0c09", padding:"12px 24px", borderRadius:7, fontFamily:"'DM Mono',monospace", fontSize:12, letterSpacing:"0.05em" }}>
+                      {r.rsvp.type==="phone"?"📞":"🔗"} {r.rsvp.label}
+                    </a>
+                  : <p style={{ background:"#1a1710", borderRadius:7, padding:"14px 18px", color:"#aaa", fontSize:13 }}>🚶 {r.rsvp.label} — no advance booking needed.</p>
+                }
+                <WhatsAppBtn phone={r.whatsapp} restaurantName={r.name} accentColor={r.accentColor} />
+                {r.whatsapp && (
+                  <p style={{ fontFamily:"'DM Mono',monospace", fontSize:9.5, color:"#555", letterSpacing:"0.06em" }}>
+                    VIA DATEDAYZ · MESSAGE OPENS WITH YOUR REFERRAL
+                  </p>
+                )}
+              </div>
             </div>
             <div style={{ background:"#141210", border:"1px solid #2a2520", borderRadius:11, overflow:"hidden" }}>
               <div style={{ height:200, background:`linear-gradient(135deg,#1a1710 0%,${r.accentColor}0e 100%)`, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:10, position:"relative" }}>
