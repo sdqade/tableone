@@ -592,6 +592,24 @@ function useReviews() {
       const v = localStorage.getItem("datedayz:myreviews");
       if (v) setMyReviews(new Set(JSON.parse(v)));
     } catch (_) {}
+
+    // Real-time subscription — update reviews instantly when anyone submits
+    const channel = supabase
+      .channel("dish_reviews_changes")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "dish_reviews" },
+        (payload) => {
+          const newReview = payload.new;
+          setReviews(prev => ({
+            ...prev,
+            [newReview.dish_key]: [newReview, ...(prev[newReview.dish_key] || [])]
+          }));
+        }
+      )
+      .subscribe();
+
+    return () => supabase.removeChannel(channel);
   }, []);
 
   const submitReview = useCallback(async ({ dishKey, restaurantId, dishName, stars, reviewText, reviewerName, photoFile }) => {
@@ -1710,6 +1728,26 @@ const ResultCard = ({ res, rank, color, setPage, guests, dim, currency }) => {
 // ── RESTAURANT PAGE ───────────────────────────────────────────────────────────
 const Restaurant = ({ id, setPage, favs, toggleFav, currency, reviews, loadReviews, submitReview, myReviews, submitting, getAggregatedRating }) => {
   const { fmt } = usePrice(currency);
+
+  // Load all reviews for this restaurant when page opens
+  useEffect(() => {
+    const r = restaurants.find(x => x.id === id);
+    if (!r) return;
+    const allItems = r.menu.flatMap(c => c.items);
+    allItems.forEach(item => {
+      loadReviews(`${id}:${item.name}`);
+    });
+  }, [id]);
+
+  // Load all reviews for this restaurant when page opens
+  useEffect(() => {
+    const r = restaurants.find(x => x.id === id);
+    if (!r) return;
+    const allItems = r.menu.flatMap(c => c.items);
+    allItems.forEach(item => {
+      loadReviews(`${id}:${item.name}`);
+    });
+  }, [id]);
   const r = restaurants.find(x => x.id===id);
   const [tab, setTab] = useState("menu");
   if (!r) return <p style={{ padding:40, color:"#666" }}>Not found.</p>;
