@@ -605,7 +605,7 @@ const Nav = ({ view, setPage, favCount, currency, setCurrency }) => (
 );
 
 // ── HOME ──────────────────────────────────────────────────────────────────────
-const Home = ({ setPage, favs, toggleFav, currency }) => {
+const Home = ({ setPage, favs, toggleFav, currency, restaurants }) => {
   const { fmt } = usePrice(currency);
   const [q, setQ] = useState("");
   const [f, setF] = useState("All");
@@ -690,7 +690,7 @@ const Home = ({ setPage, favs, toggleFav, currency }) => {
 };
 
 // ── FAVORITES PAGE ────────────────────────────────────────────────────────────
-const Favorites = ({ setPage, favs, toggleFav, currency }) => {
+const Favorites = ({ setPage, favs, toggleFav, currency, restaurants }) => {
   const { fmt } = usePrice(currency);
   const list = restaurants.filter(r => favs.has(r.id));
 
@@ -788,7 +788,7 @@ const Favorites = ({ setPage, favs, toggleFav, currency }) => {
 };
 
 // ── MAP ───────────────────────────────────────────────────────────────────────
-const MapView = ({ setPage, favs, toggleFav }) => {
+const MapView = ({ setPage, favs, toggleFav, restaurants }) => {
   const [sel, setSel] = useState(null);
   const selR = sel ? restaurants.find(r => r.id===sel) : null;
 
@@ -941,7 +941,7 @@ const MapView = ({ setPage, favs, toggleFav }) => {
 };
 
 // ── BUDGET ────────────────────────────────────────────────────────────────────
-const Budget = ({ setPage, currency }) => {
+const Budget = ({ setPage, currency, restaurants }) => {
   const { fmt, fmtNum, symbol } = usePrice(currency);
   const [budget, setBudget]       = useState(100);
   const [guests, setGuests]       = useState(2);
@@ -1406,12 +1406,15 @@ export default function App() {
   const { favs, toggle: toggleFav, loaded } = useFavorites();
   const view = typeof page==="string" ? page : page.view;
 
-  if (!loaded) return (
+  if (!loaded || restaurantsLoading) return (
     <>
       <style>{G}</style>
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"center", height:"100vh", gap:12 }}>
-        <span style={{ fontSize:24 }}>🍽️</span>
-        <span style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:"#555", letterSpacing:"0.14em" }}>LOADING DateDayz…</span>
+      <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100vh", gap:16 }}>
+        <img src="/datedayznavlogo.svg" alt="DateDayz" style={{ height:40, width:"auto", opacity:0.8 }} />
+        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+          <span style={{ fontSize:20 }}>🍽️</span>
+          <span style={{ fontFamily:"'DM Mono',monospace", fontSize:11, color:"#555", letterSpacing:"0.14em" }}>LOADING DATEDAYZ…</span>
+        </div>
       </div>
     </>
   );
